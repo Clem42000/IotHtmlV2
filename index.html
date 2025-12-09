@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IoT Warehouse Monitor – Inventree + Cam</title>
+    <title>IoT Warehouse Monitor – Inventaire + Caméra</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -12,172 +12,189 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: radial-gradient(circle at top left, #020617, #0a0f1f 40%, #000000 100%);
-            color: #dbeafe;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1d35 100%);
+            color: #e0e6ed;
             padding: 20px;
+            min-height: 100vh;
         }
 
-        .container { max-width: 1500px; margin: auto; }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
 
-        /* ================= HEADER ================= */
+        /* ===== HEADER ===== */
         header {
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #111827, #1e3a8a 70%);
+            background: linear-gradient(135deg, #1e2742 0%, #2a3251 100%);
+            padding: 28px;
+            border-radius: 15px;
             border: 1px solid rgba(96,165,250,0.25);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.45);
+            margin-bottom: 30px;
         }
 
         header h1 {
-            font-size: 30px;
+            font-size: 32px;
             font-weight: 700;
-            background: linear-gradient(90deg,#60a5fa,#a5b4fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #60a5fa;
+            margin-bottom: 5px;
         }
-
         header p {
             color: #94a3b8;
-            margin-top: 5px;
         }
 
-        /* ============ CAMÉRA ============ */
+        /* ===== CAMERA ===== */
         .card {
-            background: linear-gradient(135deg,#0f172a,#1e293b);
-            padding: 18px;
-            border-radius: 16px;
-            border: 1px solid rgba(148,163,184,0.25);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-            transition: 0.2s ease;
+            background: linear-gradient(135deg, #1e2742 0%, #252d47 100%);
+            border-radius: 15px;
+            padding: 22px;
+            border: 1px solid rgba(96,165,250,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+            transition: 0.25s ease;
         }
         .card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(96,165,250,0.45);
-            box-shadow: 0 12px 40px rgba(30,58,138,0.55);
-        }
-
-        .card h3 {
-            font-size: 18px;
-            color: #93c5fd;
-            margin-bottom: 12px;
+            transform: translateY(-4px);
+            box-shadow: 0 14px 45px rgba(96,165,250,0.25);
         }
 
         .camera-preview {
-            width: 100%; height: 220px;
-            border-radius: 14px;
-            background: #0d1323;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(96,165,250,0.1);
+            width: 100%;
+            height: 320px;
+            border-radius: 12px;
+            background: #0f1629;
+            display: flex; justify-content: center; align-items: center;
+            border: 2px solid rgba(96, 165, 250, 0.25);
+            overflow: hidden;
+        }
+        .camera-preview img {
+            width: 100%; height: 100%; object-fit: cover;
+            display: none;
+        }
+        .placeholder {
+            color: #64748b;
+            font-size: 15px;
+            text-align: center;
         }
 
-        .placeholder { color: #64748b; }
-
-        /* ============ PALETTES GRID ============ */
+        /* ===== INVENTREE ===== */
         .section-title {
-            font-size: 22px;
-            margin: 35px 0 15px;
-            color: #60a5fa;
+            font-size: 26px;
+            margin-top: 35px;
+            margin-bottom: 15px;
             font-weight: 600;
+            color: #60a5fa;
         }
 
-        .dashboard-grid {
+        .grid-palettes {
             display: grid;
             gap: 20px;
-            grid-template-columns: repeat(auto-fit,minmax(330px,1fr));
+            grid-template-columns: repeat(auto-fit, minmax(380px,1fr));
         }
 
-        .inv-title {
-            font-size: 17px;
-            color: #bfdbfe;
-            font-weight: 600;
+        .palette-card {
+            background: linear-gradient(135deg,#1e2742,#252d47);
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(96,165,250,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            transition: 0.25s ease;
         }
-        .inv-subtitle {
-            font-size: 13px;
-            color: #94a3b8;
+        .palette-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(96,165,250,0.4);
+        }
+
+        .palette-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #93c5fd;
+        }
+
+        .palette-meta {
+            font-size: 14px;
+            color: #a5b4fc;
             margin-bottom: 12px;
         }
 
-        .inv-item {
-            display: flex;
-            gap: 12px;
-            background: rgba(15,23,42,0.7);
+        .item {
+            background: rgba(15,22,41,0.5);
             padding: 10px;
-            border-radius: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
             border: 1px solid rgba(96,165,250,0.15);
-            margin-bottom: 8px;
-            transition: 0.2s ease;
-        }
-        .inv-item:hover {
-            border-color: rgba(96,165,250,0.45);
-            background: rgba(30,58,138,0.45);
         }
 
-        .inv-empty {
-            font-style: italic;
-            color: #64748b;
-            padding: 5px 0;
+        .item-name {
+            color: #e0e6ed;
+            font-weight: 600;
+            font-size: 15px;
         }
-
-        .inv-img {
-            width: 55px; height: 55px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid rgba(148,163,184,0.3);
+        .item-desc {
+            color: #94a3b8;
+            font-size: 13px;
         }
-
-        .item-name { font-weight: 600; color: #dbeafe; }
-        .item-desc { font-size: 12px; color: #9ca3af; }
-        .item-meta { font-size: 12px; color: #93c5fd; margin-top: 2px; }
+        .item-extra {
+            margin-top: 4px;
+            font-size: 13px;
+            color: #60a5fa;
+            font-weight: 500;
+        }
     </style>
 </head>
 
 <body>
 <div class="container">
 
-    <!-- ================= HEADER ================= -->
+    <!-- HEADER -->
     <header>
         <h1>📦 IoT Warehouse Monitor</h1>
-        <p>Flux vidéo • Inventree • WebSocket temps réel</p>
+        <p>Caméra en direct • Inventaire automatique • WebSocket temps réel</p>
     </header>
 
-    <!-- ================= CAMERA ================= -->
-    <div class="card" style="max-width:520px;">
-        <h3>📷 Caméra Entrepôt</h3>
+    <!-- CAMERA -->
+    <div class="card">
+        <h3 style="color:#60a5fa; margin-bottom:12px;">🎥 Caméra de surveillance</h3>
 
         <div class="camera-preview">
-            <img id="small-camera"
-                 src="http://192.168.100.145:81/stream"
-                 style="width:100%; height:100%; display:none; object-fit:cover;">
-            <div id="small-camera-placeholder" class="placeholder">Connexion caméra…</div>
+            <img id="camera-stream" src="http://192.168.100.139:81/stream">
+            <div id="cam-placeholder" class="placeholder">Connexion à la caméra…</div>
         </div>
     </div>
 
     <script>
-        const cam = document.getElementById("small-camera");
-        const ph = document.getElementById("small-camera-placeholder");
+        const cam = document.getElementById("camera-stream");
+        const placeholder = document.getElementById("cam-placeholder");
 
-        cam.onload = () => { cam.style.display = "block"; ph.style.display = "none"; };
-        cam.onerror = () => { cam.style.display = "none"; ph.innerHTML = "Flux indisponible"; };
+        cam.onload = () => {
+            placeholder.style.display = "none";
+            cam.style.display = "block";
+        };
 
-        setInterval(()=>cam.src="http://192.168.100.145:81/stream?ts="+Date.now(),15000);
+        cam.onerror = () => {
+            cam.style.display = "none";
+            placeholder.innerHTML = "📡 Flux indisponible<br>192.168.100.139";
+        };
+
+        setInterval(() => {
+            cam.src = "http://192.168.100.139:81/stream?ts=" + Date.now();
+        }, 15000);
     </script>
 
-    <!-- ================= SECTION PALETTES ================= -->
-    <h2 class="section-title">📦 Visualisation Inventaire – Palettes</h2>
+    <!-- INVENTREE SECTION -->
+    <h2 class="section-title">📦 Inventaire — Palettes & Colis</h2>
 
-    <div id="palettes-view" class="dashboard-grid"></div>
+    <div id="inventree-view" class="grid-palettes"></div>
 
-    <!-- ================= WEBSOCKET ================= -->
     <script>
         console.log("Connexion WebSocket…");
         const ws = new WebSocket("ws://192.168.100.112:8765");
 
         ws.onopen = () => console.log("WS connecté");
-        ws.onerror = (e) => console.error("WS erreur", e);
+        ws.onerror = e => console.error("Erreur WS", e);
         ws.onclose = () => console.warn("WS fermé");
 
-        ws.onmessage = (event) => {
+        ws.onmessage = event => {
             const data = JSON.parse(event.data);
             if (data.inventree && data.inventree.palettes) {
                 renderPalettes(data.inventree.palettes);
@@ -185,42 +202,39 @@
         };
 
         function renderPalettes(palettes) {
-            const cont = document.getElementById("palettes-view");
+            const cont = document.getElementById("inventree-view");
             cont.innerHTML = "";
 
             palettes.forEach(p => {
-                let card = document.createElement("div");
-                card.className = "card";
+                let div = document.createElement("div");
+                div.className = "palette-card";
 
-                card.innerHTML = `
-                    <div class="inv-title">${p.name}</div>
-                    <div class="inv-subtitle">
-                        ${p.total_qty} articles — ${p.total_weight.toFixed(2)} kg — ${p.total_price.toFixed(2)} €
+                div.innerHTML = `
+                    <div class="palette-title">${p.name}</div>
+                    <div class="palette-meta">
+                        ${p.total_qty} colis — ${p.total_weight.toFixed(2)} kg — ${p.total_price.toFixed(2)} €
                     </div>
                 `;
 
                 if (!p.items || p.items.length === 0) {
-                    card.innerHTML += `<div class="inv-empty">Aucun colis</div>`;
+                    div.innerHTML += `<div style="color:#64748b; font-style:italic;">Aucun colis</div>`;
                 } else {
                     p.items.forEach(i => {
-                        card.innerHTML += `
-                        <div class="inv-item">
-                            <img src="${i.thumbnail || ''}" class="inv-img">
-
-                            <div style="flex:1;">
-                                <div class="item-name">${i.name}</div>
-                                <div class="item-desc">${i.description || ""}</div>
-                                <div class="item-meta">
-                                    Qty: ${i.qty}
-                                    ${i.weight ? ` • ${i.weight} kg` : ""}
-                                    ${i.price ? ` • ${i.price} €` : ""}
-                                </div>
+                        div.innerHTML += `
+                        <div class="item">
+                            <div class="item-name">${i.name}</div>
+                            <div class="item-desc">${i.description || "— Aucun détail —"}</div>
+                            <div class="item-extra">
+                                Quantité : ${i.qty}
+                                ${i.weight ? ` • ${i.weight} kg` : ""}
+                                ${i.price ? ` • ${i.price} €` : ""}
                             </div>
-                        </div>`;
+                        </div>
+                        `;
                     });
                 }
 
-                cont.appendChild(card);
+                cont.appendChild(div);
             });
         }
     </script>
