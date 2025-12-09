@@ -1,119 +1,276 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Surveillance IoT – Gestion de Stock</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<title>Surveillance IoT – Dashboard Entrepôt</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{
-            font-family:'Poppins',sans-serif;
-            background:linear-gradient(135deg,#0a0e27 0%,#1a1d35 100%);
-            color:#e0e6ed;min-height:100vh;padding:20px
-        }
-        .container{max-width:1400px;margin:0 auto}
-        header{
-            background:linear-gradient(135deg,#1e2742 0%,#2a3251 100%);
-            padding:20px 24px;border-radius:15px;
-            box-shadow:0 8px 32px rgba(0,0,0,0.4);
-            margin-bottom:20px;border:1px solid rgba(96,165,250,0.2)
-        }
-        header h1{font-size:26px;font-weight:700;color:#60a5fa;margin-bottom:4px}
-        header p{color:#94a3b8;font-size:13px;font-weight:300}
-        .tabs{margin-top:16px;display:flex;gap:10px}
-        .tab-btn{
-            border-radius:999px;padding:8px 18px;font-size:13px;
-            border:1px solid rgba(148,163,184,0.4);
-            background:rgba(15,23,42,0.8);color:#cbd5f5;
-            cursor:pointer;transition:.2s
-        }
-        .tab-btn.active{
-            background:#2563eb;color:#e5e7eb;border-color:#60a5fa;
-            box-shadow:0 0 18px rgba(37,99,235,0.6)
-        }
-        .tab-btn:hover{transform:translateY(-1px)}
-        .tab-content{margin-top:20px}
-        .tab-panel{display:none}
-        .tab-panel.active{display:block}
-        .dashboard-grid{
-            display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-            gap:20px;margin-bottom:25px
-        }
-        .card{
-            background:linear-gradient(135deg,#1e2742 0%,#252d47 100%);
-            border-radius:15px;padding:18px 20px;
-            box-shadow:0 8px 32px rgba(0,0,0,0.35);
-            border:1px solid rgba(96,165,250,0.15);
-            transition:.2s
-        }
-        .card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(96,165,250,0.25)}
-        .card h3{font-size:17px;font-weight:600;margin-bottom:10px;color:#60a5fa;display:flex;align-items:center;gap:8px}
-        .stats-grid{
-            display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-            gap:18px;margin-bottom:20px
-        }
-        .stat-card{
-            background:linear-gradient(135deg,#1e2742 0%,#252d47 100%);
-            border-radius:15px;padding:20px;text-align:center;
-            border:1px solid rgba(96,165,250,0.15);
-            box-shadow:0 8px 32px rgba(0,0,0,0.3)
-        }
-        .stat-label{font-size:11px;text-transform:uppercase;color:#64748b;font-weight:600;letter-spacing:.06em}
-        .stat-value{font-size:30px;font-weight:700;color:#60a5fa;margin-top:6px}
-        .progress-bar{width:100%;height:8px;background:rgba(15,22,41,0.8);border-radius:10px;margin-top:10px;overflow:hidden}
-        .progress-fill{height:100%;background:linear-gradient(90deg,#22c55e 0%,#10b981 100%);border-radius:10px;width:0%;transition:.4s}
-        .camera-preview{
-            width:100%;height:260px;background:#0f172a;border-radius:12px;
-            margin-bottom:10px;display:flex;align-items:center;justify-content:center;
-            overflow:hidden;border:2px solid rgba(96,165,250,0.25)
-        }
-        .camera-preview img{width:100%;height:100%;object-fit:cover}
-        .camera-preview .placeholder{color:#64748b;font-size:14px;text-align:center}
-        .palette-status{
-            display:inline-flex;align-items:center;gap:6px;font-size:12px;
-            padding:4px 10px;border-radius:999px;margin-bottom:8px
-        }
-        .status-ok{background:rgba(22,163,74,0.2);color:#4ade80;border:1px solid rgba(22,163,74,0.9)}
-        .status-error{background:rgba(239,68,68,0.2);color:#fecaca;border:1px solid rgba(239,68,68,0.9)}
-        .status-unknown{background:rgba(148,163,184,0.2);color:#e5e7eb;border:1px solid rgba(148,163,184,0.9)}
-        .info-grid{
-            margin-top:8px;display:grid;
-            grid-template-columns:repeat(2,minmax(0,1fr));gap:10px
-        }
-        .info-item{
-            background:rgba(15,23,42,0.6);padding:8px 10px;border-radius:8px;
-            border:1px solid rgba(51,65,85,0.9)
-        }
-        .info-item label{
-            display:block;font-size:10px;text-transform:uppercase;color:#64748b;
-            letter-spacing:.08em;margin-bottom:4px
-        }
-        .info-item .value{font-size:15px;font-weight:600;color:#e5e7eb}
-        .items-list{margin-top:10px;font-size:13px}
-        .items-list div{
-            display:flex;justify-content:space-between;padding:4px 0;
-            border-bottom:1px dashed rgba(51,65,85,0.5)
-        }
-        .items-list div:last-child{border-bottom:none}
-        .items-list span.name{color:#e5e7eb}
-        .items-list span.qty{color:#93c5fd;font-weight:600}
-        .items-list span.expect{font-size:11px;color:#9ca3af;margin-left:6px}
-        .error-details{margin-top:8px;font-size:11px;color:#fecaca}
-        #scan-input{
-            width:100%;padding:10px;border-radius:8px;
-            margin-bottom:10px;border:1px solid rgba(96,165,250,0.3);
-            background:#0f172a;color:#e0e6ed;font-size:15px
-        }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
+<style>
+/* --------------------------
+   GLOBAL
+--------------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: radial-gradient(circle at 20% 20%, #11162e 0%, #0a0d1f 100%);
+    color: #e0e6f0;
+    padding: 20px;
+}
+
+/* Glow subtle */
+.glow {
+    box-shadow: 0 0 25px rgba(90, 140, 255, 0.15);
+}
+
+.container {
+    max-width: 1450px;
+    margin: auto;
+}
+
+/* --------------------------
+   HEADER
+--------------------------- */
+header {
+    background: rgba(20, 28, 55, 0.75);
+    padding: 26px 30px;
+    border-radius: 18px;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(120, 160, 255, 0.15);
+    margin-bottom: 25px;
+    transition: 0.25s;
+}
+header:hover {
+    transform: translateY(-3px);
+}
+
+header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #6da8ff;
+    margin-bottom: 6px;
+}
+
+/* Tabs */
+.tabs {
+    margin-top: 18px;
+    display: flex;
+    gap: 12px;
+}
+
+.tab-btn {
+    padding: 8px 20px;
+    border-radius: 999px;
+    border: 1px solid rgba(130, 150, 200, 0.35);
+    background: rgba(10, 15, 30, 0.65);
+    color: #cfd9fc;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.25s ease;
+}
+.tab-btn:hover {
+    transform: translateY(-2px);
+}
+.tab-btn.active {
+    background: linear-gradient(135deg, #2962ff, #3b82f6);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 0 15px rgba(41, 98, 255, 0.4);
+}
+
+/* --------------------------
+   CARDS
+--------------------------- */
+.card {
+    background: rgba(20, 28, 55, 0.65);
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid rgba(120, 160, 255, 0.12);
+    backdrop-filter: blur(10px);
+    transition: 0.25s;
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 25px rgba(90, 140, 255, 0.2);
+}
+
+.card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: #7db4ff;
+}
+
+/* Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 20px;
+}
+
+/* --------------------------
+   STATS CARDS
+--------------------------- */
+.stat-card {
+    background: rgba(25, 32, 60, 0.75);
+    padding: 22px;
+    border-radius: 16px;
+    border: 1px solid rgba(120, 160, 255, 0.15);
+    text-align: center;
+    transition: 0.25s ease;
+}
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 20px rgba(90, 140, 255, 0.25);
+}
+
+.stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #7b89a8;
+    letter-spacing: 0.07em;
+}
+
+.stat-value {
+    font-size: 34px;
+    margin-top: 8px;
+    font-weight: 700;
+    color: #8bb8ff;
+}
+
+/* --------------------------
+   CAMERA
+--------------------------- */
+.camera-preview {
+    width: 100%;
+    height: 260px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(120, 160, 255, 0.25);
+    background: #0f162e;
+}
+
+.camera-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --------------------------
+   PALETTES
+--------------------------- */
+.palette-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+}
+
+.status-ok {
+    background: rgba(0, 190, 80, 0.2);
+    color: #67ffb5;
+    border: 1px solid rgba(0, 200, 90, 0.6);
+}
+
+.status-error {
+    background: rgba(255, 75, 75, 0.25);
+    color: #ffbcbc;
+    border: 1px solid rgba(255, 110, 110, 0.7);
+}
+
+.status-unknown {
+    background: rgba(120, 130, 150, 0.25);
+    color: #d0d3e2;
+    border: 1px solid rgba(160, 170, 190, 0.6);
+}
+
+.info-item {
+    background: rgba(15, 20, 40, 0.6);
+    border: 1px solid rgba(70, 80, 110, 0.7);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.items-list {
+    margin-top: 14px;
+    font-size: 14px;
+}
+
+.items-list div {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dashed rgba(70, 90, 130, 0.5);
+}
+
+.error-details {
+    margin-top: 10px;
+    color: #ffbdbd;
+    font-size: 12px;
+}
+
+/* --------------------------
+   CONFIG
+--------------------------- */
+.config-card {
+    background: rgba(10, 14, 30, 0.75);
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(140, 150, 200, 0.35);
+}
+
+.config-btn {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(45, 60, 110, 0.7);
+    border: 1px solid rgba(140, 150, 200, 0.4);
+    color: #d5defc;
+    cursor: pointer;
+    font-size: 13px;
+}
+.config-btn:hover {
+    background: rgba(70, 85, 145, 0.7);
+}
+
+.config-save-all {
+    margin-top: 16px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(0, 160, 90, 0.2);
+    border: 1px solid #10c26e;
+    color: #b6ffd6;
+    font-weight: 600;
+}
+
+/* --------------------------
+   RESPONSIVE
+--------------------------- */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 22px;
+    }
+    .stat-value {
+        font-size: 26px;
+    }
+}
+</style>
 </head>
 
 <body>
 <div class="container">
-<header>
-    <h1>🎥 Surveillance IoT – Gestion de Stock</h1>
-    <p>Raspberry Pi · WebSocket temps réel · Inventree · ESP32-CAM</p>
+
+<header class="glow">
+    <h1>🎥 Dashboard IoT – Entrepôt</h1>
+    <p>Inventree · ESP32-CAM · WebSocket temps réel · Raspberry Pi</p>
 
     <div class="tabs">
         <button class="tab-btn active" data-tab="surveillance">Surveillance</button>
@@ -123,333 +280,279 @@
 
 <div class="tab-content">
 
+<!-- ------------------------------------------------------
+    SURVEILLANCE
+------------------------------------------------------ -->
 <section id="tab-surveillance" class="tab-panel active">
 
-    <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">Colis total détectés</div><div class="stat-value" id="stat-total">0</div></div>
-        <div class="stat-card"><div class="stat-label">Nombre de palettes</div><div class="stat-value" id="stat-palettes">0</div></div>
-        <div class="stat-card">
+    <!-- Stats -->
+    <div class="dashboard-grid">
+        <div class="stat-card glow">
+            <div class="stat-label">Colis total détectés</div>
+            <div class="stat-value" id="stat-total">0</div>
+        </div>
+        <div class="stat-card glow">
+            <div class="stat-label">Nombre de palettes</div>
+            <div class="stat-value" id="stat-palettes">0</div>
+        </div>
+        <div class="stat-card glow">
             <div class="stat-label">Taux de remplissage</div>
             <div class="stat-value" id="stat-fill">0%</div>
-            <div class="progress-bar"><div class="progress-fill" id="fill-progress"></div></div>
         </div>
     </div>
 
+    <!-- Caméra -->
     <div class="dashboard-grid">
-
-        <div class="card">
+        <div class="card glow">
             <h3>Caméra entrepôt</h3>
-            <input id="scan-input" placeholder="Scanner un QR ici…">
             <div class="camera-preview">
-                <img id="camera-stream" src="http://192.168.100.139:81/stream" style="display:none;">
-                <div class="placeholder" id="camera-placeholder">Connexion au flux vidéo…<br>192.168.100.139</div>
+                <img id="camera-stream" src="http://192.168.100.139:81/stream" />
             </div>
         </div>
-
-        <div class="card" id="scan-card">
-            <h3>📡 Dernier scan QR</h3>
-            <div id="scan-status" style="margin-top:10px;font-size:15px;color:#cbd5f5;">Aucun scan encore reçu.</div>
-
-            <div class="info-grid" style="margin-top:12px;">
-                <div class="info-item"><label>Article</label><div class="value" id="scan-name">—</div></div>
-                <div class="info-item"><label>Description</label><div class="value" id="scan-desc" style="font-size:13px;">—</div></div>
-                <div class="info-item"><label>Palette détectée</label><div class="value" id="scan-location">—</div></div>
-                <div class="info-item"><label>Palette attendue</label><div class="value" id="scan-expected">—</div></div>
-            </div>
-        </div>
-
     </div>
 
-    <h3 style="margin:10px 2px 8px;">Palettes & contenu (Inventree)</h3>
+    <h3 style="margin:20px 0 10px;">📦 Palettes & contenu</h3>
+
     <div class="dashboard-grid" id="palettes-container"></div>
 
 </section>
 
-
+<!-- ------------------------------------------------------
+    CONFIG
+------------------------------------------------------ -->
 <section id="tab-config" class="tab-panel">
-    <p class="config-help">
-        Ici tu définis <strong>la répartition attendue</strong> des cartons par palette.
+
+    <p style="color:#c4d3fa; margin-bottom:12px;">
+        Définis ici les cartons attendus sur chaque palette.<br>
+        Les erreurs seront visibles dans l'onglet <strong>Surveillance</strong>.
     </p>
+
     <div class="dashboard-grid" id="config-container"></div>
 
-    <button class="config-save-all" id="btn-save-config">
+    <button class="config-save-all glow" id="btn-save-config">
         💾 Enregistrer la configuration
     </button>
+
 </section>
 
-</div>
-</div>
+</div><!-- /tab-content -->
+</div><!-- /container -->
 
 <script>
-const tabButtons=document.querySelectorAll('.tab-btn');
-const tabPanels=document.querySelectorAll('.tab-panel');
-tabButtons.forEach(btn=>{
-    btn.onclick=()=>{
-        const t=btn.dataset.tab;
-        tabButtons.forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        tabPanels.forEach(p=>p.classList.toggle('active',p.id==='tab-'+t));
-    };
+/* --------------------------
+   TABS
+--------------------------- */
+const tabButtons = document.querySelectorAll(".tab-btn");
+const tabPanels = document.querySelectorAll(".tab-panel");
+
+tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        tabButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        tabPanels.forEach(p => {
+            p.classList.remove("active");
+            if (p.id === "tab-" + btn.dataset.tab) p.classList.add("active");
+        });
+    });
 });
 
-const camImg=document.getElementById('camera-stream');
-const camPlaceholder=document.getElementById('camera-placeholder');
-camImg.onload=()=>{camImg.style.display='block';camPlaceholder.style.display='none'};
-camImg.onerror=()=>{camImg.style.display='none';camPlaceholder.style.display='block'};
-setInterval(()=>{camImg.src="http://192.168.100.139:81/stream?ts="+Date.now()},20000);
+/* --------------------------
+   CAMERA AUTO REFRESH
+--------------------------- */
+setInterval(() => {
+    document.getElementById("camera-stream").src =
+        "http://192.168.100.139:81/stream?ts=" + Date.now();
+}, 15000);
 
-const ws=new WebSocket("ws://192.168.100.112:8765");
+/* --------------------------
+   WEBSOCKET
+--------------------------- */
+const ws = new WebSocket("ws://192.168.100.112:8765");
 
-let lastPalettes=[];
-let palettesConfig={};
+let lastPalettes = [];
+let palettesConfig = {};
 
-function loadConfig(){
-    try{
-        const raw=localStorage.getItem('palettesConfig');
-        palettesConfig=raw?JSON.parse(raw):{};
-    }catch{palettesConfig={}};
+function loadConfig() {
+    const raw = localStorage.getItem("palettesConfig");
+    palettesConfig = raw ? JSON.parse(raw) : {};
 }
 loadConfig();
 
-const scanInput=document.getElementById("scan-input");
-scanInput.addEventListener("keydown",e=>{
-    if(e.key==="Enter"){
-        const code=scanInput.value.trim();
-        if(code.length>0){
-            ws.send(JSON.stringify({type:"scan",barcode:code}));
-        }
-        scanInput.value="";
-    }
-});
+ws.onmessage = e => {
+    const msg = JSON.parse(e.data);
 
-ws.onmessage=e=>{
-    const msg=JSON.parse(e.data);
-
-    if(msg.inventree){
-        lastPalettes=msg.inventree.palettes;
+    if (msg.inventree) {
+        lastPalettes = msg.inventree.palettes;
         updateDashboard();
     }
-
-    if(msg.scan) handleScan(msg.scan);
 };
 
-function handleScan(scan){
-    const st=document.getElementById("scan-status");
-    const n=document.getElementById("scan-name");
-    const d=document.getElementById("scan-desc");
-    const l=document.getElementById("scan-location");
-    const ex=document.getElementById("scan-expected");
+/* --------------------------
+   UPDATE DASHBOARD
+--------------------------- */
+function updateDashboard() {
+    let total = 0;
+    lastPalettes.forEach(p => total += p.total_qty || 0);
 
-    if(!scan||!scan.ok){
-        st.innerHTML="❌ Scan invalide";st.style.color="#fca5a5";
-        n.innerText=d.innerText=l.innerText=ex.innerText="—";
-        return;
-    }
+    document.getElementById("stat-total").textContent = total;
+    document.getElementById("stat-palettes").textContent = lastPalettes.length;
 
-    const name=scan.name||"Inconnu";
-    const desc=scan.description||"";
-    const loc=scan.location||"Inconnue";
-
-    let expected="Non défini";
-    for(const pName of Object.keys(palettesConfig)){
-        if(palettesConfig[pName][name]!==undefined){
-            expected=pName;
-        }
-    }
-
-    n.innerText=name;
-    d.innerText=desc||"—";
-    l.innerText=loc;
-    ex.innerText=expected;
-
-    if(expected==="Non défini"){
-        st.innerHTML="❔ Aucun emplacement attendu";st.style.color="#cbd5f5";return;
-    }
-
-    if(expected===loc){
-        st.innerHTML="✔ Correct";st.style.color="#4ade80";
-    }else{
-        st.innerHTML=`✖ Mauvaise palette (attendu: ${expected})`;st.style.color="#fca5a5";
-    }
-}
-
-function computeComplianceForPalette(p){
-    const name=p.name||"Palette";
-    const exp=palettesConfig[name]||{};
-    const act={};
-    (p.items||[]).forEach(it=>{
-        const n=it.name||"Sans nom";
-        const q=Number(it.qty||it.quantity||0);
-        act[n]=(act[n]||0)+q;
-    });
-
-    let ok=true;const errors=[];
-
-    for(const carton in exp){
-        const needed=exp[carton];
-        const qty=act[carton]||0;
-        if(qty<needed){ok=false;errors.push(`Manque ${needed-qty} × ${carton}`)}
-        if(qty>needed){ok=false;errors.push(`${qty-needed} × ${carton} en trop`)}
-    }
-
-    for(const carton in act){
-        if(exp[carton]===undefined){
-            ok=false;errors.push(`Carton non prévu : ${carton}`);
-        }
-    }
-
-    let status="unknown";
-    if(Object.keys(exp).length===0) status="unknown";
-    else if(ok) status="ok";
-    else status="error";
-
-    return{status,errors,exp,act};
-}
-
-function updateDashboard(){
-    let total=0;
-    lastPalettes.forEach(p=>total+=Number(p.total_qty||0));
-
-    document.getElementById("stat-total").innerText=total;
-    document.getElementById("stat-palettes").innerText=lastPalettes.length;
-
-    const fill=Math.min(100,Math.round(total));
-    document.getElementById("stat-fill").innerText=fill+"%";
-    document.getElementById("fill-progress").style.width=fill+"%";
+    const fill = Math.min(100, Math.round(total));
+    document.getElementById("stat-fill").textContent = fill + "%";
 
     renderPalettes();
     renderConfig();
 }
 
-function renderPalettes(){
-    const c=document.getElementById("palettes-container");
-    c.innerHTML="";
+/* --------------------------
+   PALETTE COMPLIANCE
+--------------------------- */
+function computeCompliance(palette) {
+    const expected = palettesConfig[palette.name] || {};
+    const actual = {};
 
-    lastPalettes.forEach(p=>{
-        const {status,errors,exp}=computeComplianceForPalette(p);
+    (palette.items || []).forEach(it => {
+        const n = it.name;
+        const q = Number(it.qty || 0);
+        actual[n] = (actual[n] || 0) + q;
+    });
 
-        let cls="status-unknown",txt="Configuration manquante";
-        if(status==="ok"){cls="status-ok";txt="Palette conforme"}
-        if(status==="error"){cls="status-error";txt="Palette non conforme"}
+    let ok = true;
+    let errors = [];
 
-        let items="";
-        (p.items||[]).forEach(it=>{
-            const n=it.name||"Sans nom";
-            const q=Number(it.qty||it.quantity||0);
-            const e=exp[n]!==undefined?exp[n]:null;
-            items+=`<div><span class="name">${n}</span><span><span class="qty">${q}</span>${e!==null?`<span class="expect">(attendu:${e})</span>`:""}</span></div>`;
+    for (let n in expected) {
+        if ((actual[n] || 0) < expected[n]) {
+            ok = false;
+            errors.push(`Manque ${expected[n] - actual[n]} × ${n}`);
+        }
+    }
+
+    for (let n in actual) {
+        if (!expected[n]) {
+            ok = false;
+            errors.push(`Non prévu : ${n}`);
+        }
+    }
+
+    if (Object.keys(expected).length === 0) return { status: "unknown", errors: [] };
+    return { status: ok ? "ok" : "error", errors };
+}
+
+/* --------------------------
+   RENDER SURVEILLANCE
+--------------------------- */
+function renderPalettes() {
+    const container = document.getElementById("palettes-container");
+    container.innerHTML = "";
+
+    lastPalettes.forEach(p => {
+        const { status, errors } = computeCompliance(p);
+
+        let sClass = "status-unknown";
+        let sText = "Aucune configuration";
+
+        if (status === "ok") { sClass = "status-ok"; sText = "Conforme"; }
+        if (status === "error") { sClass = "status-error"; sText = "Non conforme"; }
+
+        let list = "";
+        p.items.forEach(it => {
+            list += `
+                <div>
+                    <span>${it.name}</span>
+                    <span>${it.qty || 0}</span>
+                </div>`;
         });
 
-        const err=errors.length?`<div class="error-details">${errors.join("<br>")}</div>`:"";
-
-        const d=document.createElement("div");
-        d.className="card";
-        d.innerHTML=`
+        const div = document.createElement("div");
+        div.className = "card glow";
+        div.innerHTML = `
             <h3>${p.name}</h3>
-            <div class="palette-status ${cls}">${txt}</div>
-            <div class="info-grid">
-                <div class="info-item"><label>Colis</label><div class="value">${p.total_qty||0}</div></div>
-                <div class="info-item"><label>Articles uniques</label><div class="value">${(p.items||[]).length}</div></div>
+            <div class="palette-status ${sClass}">${sText}</div>
+
+            <div class="info-item">
+                <strong>Total :</strong> ${p.total_qty}
             </div>
-            <div class="items-list">${items||"<div>Aucun article</div>"}</div>
-            ${err}
+
+            <div class="items-list">${list}</div>
+
+            ${errors.length ? `<div class="error-details">${errors.join("<br>")}</div>` : ""}
         `;
-        c.appendChild(d);
+        container.appendChild(div);
     });
 }
 
-function renderConfig(){
-    const c=document.getElementById("config-container");
-    c.innerHTML="";
+/* --------------------------
+   RENDER CONFIG
+--------------------------- */
+function renderConfig() {
+    const container = document.getElementById("config-container");
+    container.innerHTML = "";
 
-    lastPalettes.forEach(p=>{
-        const name=p.name;
-        if(!palettesConfig[name]) palettesConfig[name]={};
+    lastPalettes.forEach(p => {
+        const cfg = palettesConfig[p.name] || {};
 
-        let lines="";
-        const rules=palettesConfig[name];
-
-        if(Object.keys(rules).length===0){
-            lines+=lineHTML(name,"","");
-        } else {
-            for(const carton in rules){
-                lines+=lineHTML(name,carton,rules[carton]);
-            }
-        }
-
-        const d=document.createElement("div");
-        d.className="config-card";
-        d.innerHTML=`
-            <h4>${name}</h4>
-            <div style="font-size:12px;color:#9ca3af;margin-bottom:6px;">Définis les cartons attendus.</div>
-            <div class="config-lines" data-palette="${name}">${lines}</div>
-            <div class="config-actions">
-                <button class="config-btn small" data-action="add" data-palette="${name}">+ Ajouter</button>
-                <button class="config-btn small" data-action="fill" data-palette="${name}">🪄 Prendre l'état actuel</button>
-            </div>
-        `;
-        c.appendChild(d);
-    });
-
-    attachConfigEvents();
-}
-
-function lineHTML(p,carton,qty){
-    return `
-    <div class="config-line" data-palette="${p}">
-        <input type="text" class="cfg-name" value="${carton}">
-        <input type="number" class="cfg-qty" value="${qty}">
-        <button class="config-btn small cfg-remove">✖</button>
-    </div>`;
-}
-
-function attachConfigEvents(){
-    const c=document.getElementById("config-container");
-    c.onclick=e=>{
-        const btn=e.target.closest("button");
-        if(!btn)return;
-
-        const act=btn.dataset.action;
-        const p=btn.dataset.palette;
-        const card=btn.closest(".config-card");
-        const lines=card.querySelector(".config-lines");
-
-        if(act==="add"){
-            lines.insertAdjacentHTML("beforeend",lineHTML(p,"",""));
-        }
-        if(act==="fill"){
-            const real=lastPalettes.find(x=>x.name===p);
-            if(!real)return;
-            const map={};
-            (real.items||[]).forEach(i=>{
-                const n=i.name;
-                const q=Number(i.qty||i.quantity||0);
-                map[n]=q;
-            });
-            palettesConfig[p]=map;
-            renderConfig();
-        }
-        if(btn.classList.contains('cfg-remove')){
-            btn.closest(".config-line").remove();
-        }
-    };
-}
-
-document.getElementById("btn-save-config").onclick=()=>{
-    const cards=document.querySelectorAll(".config-card");
-    palettesConfig={};
-    cards.forEach(card=>{
-        const p=card.querySelector(".config-lines").dataset.palette;
-        const lines=card.querySelectorAll(".config-line");
-        palettesConfig[p]={};
-        lines.forEach(l=>{
-            const name=l.querySelector(".cfg-name").value.trim();
-            const qty=Number(l.querySelector(".cfg-qty").value);
-            if(name&&qty>0) palettesConfig[p][name]=qty;
+        let fields = "";
+        Object.keys(cfg).forEach(item => {
+            fields += configLine(p.name, item, cfg[item]);
         });
+
+        if (!Object.keys(cfg).length)
+            fields += configLine(p.name, "", "");
+
+        const div = document.createElement("div");
+        div.className = "config-card glow";
+        div.innerHTML = `
+            <h3>${p.name}</h3>
+            <div class="config-lines" data-palette="${p.name}">
+                ${fields}
+            </div>
+            <button class="config-btn" onclick="addLine('${p.name}')">+ Ajouter</button>
+        `;
+        container.appendChild(div);
     });
-    localStorage.setItem('palettesConfig',JSON.stringify(palettesConfig));
-    renderPalettes();
+}
+
+function configLine(palette, name, qty) {
+    return `
+        <div style="display:flex;gap:8px;margin-top:8px;">
+            <input type="text" class="cfg-name" data-palette="${palette}" value="${name}" placeholder="Nom">
+            <input type="number" class="cfg-qty" data-palette="${palette}" value="${qty}" min="0" style="width:80px;">
+        </div>`;
+}
+
+function addLine(pName) {
+    const div = document.querySelector(`.config-lines[data-palette="${pName}"]`);
+    div.insertAdjacentHTML("beforeend", configLine(pName, "", ""));
+}
+
+/* --------------------------
+   SAVE CONFIG
+--------------------------- */
+document.getElementById("btn-save-config").onclick = () => {
+    const inputs = document.querySelectorAll(".cfg-name");
+    palettesConfig = {};
+
+    inputs.forEach(inp => {
+        const palette = inp.dataset.palette;
+        const qty = document.querySelector(`.cfg-qty[data-palette="${palette}"]`);
+    });
+
+    const cards = document.querySelectorAll(".config-card");
+    cards.forEach(card => {
+        const pname = card.querySelector(".config-lines").dataset.palette;
+        palettesConfig[pname] = {};
+
+        const lines = card.querySelectorAll("input");
+        for (let i = 0; i < lines.length; i += 2) {
+            const n = lines[i].value.trim();
+            const q = Number(lines[i + 1].value || 0);
+            if (n && q > 0) palettesConfig[pname][n] = q;
+        }
+    });
+
+    localStorage.setItem("palettesConfig", JSON.stringify(palettesConfig));
+    alert("Configuration sauvegardée ✔");
 };
 </script>
 
