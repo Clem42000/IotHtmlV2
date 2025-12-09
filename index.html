@@ -436,7 +436,38 @@
                             192.168.100.139
                         </div>
                     </div>
-                </div>
+</div> <!-- FIN DE LA CAMERA -->
+
+<!-- Dernier Scan QR -->
+<div class="card" id="scan-card" style="margin-top: 10px;">
+    <h3>📡 Dernier scan QR</h3>
+
+    <div id="scan-status" style="margin-top: 10px; font-size: 15px; color: #cbd5f5;">
+        Aucun scan encore reçu.
+    </div>
+
+    <div class="info-grid" style="margin-top: 12px;">
+        <div class="info-item">
+            <label>Article</label>
+            <div class="value" id="scan-name">—</div>
+        </div>
+        <div class="info-item">
+            <label>Description</label>
+            <div class="value" id="scan-desc" style="font-size:13px;">—</div>
+        </div>
+        <div class="info-item">
+            <label>Palette détectée</label>
+            <div class="value" id="scan-location">—</div>
+        </div>
+        <div class="info-item">
+            <label>Palette attendue</label>
+            <div class="value" id="scan-expected">—</div>
+        </div>
+    </div>
+</div>
+
+<h3 style="margin: 10px 2px 8px;">Palettes & contenu (Inventree)</h3>
+
 
                 <!-- Placeholder pour étendre plus tard si besoin -->
             </div>
@@ -779,6 +810,77 @@
         `;
     }
 
+// =============================
+// Gestion du dernier scan QR
+// =============================
+function handleScan(scan) {
+    const statusDiv = document.getElementById("scan-status");
+    const nameDiv = document.getElementById("scan-name");
+    const descDiv = document.getElementById("scan-desc");
+    const locDiv = document.getElementById("scan-location");
+    const expDiv = document.getElementById("scan-expected");
+
+    // Reset si scan invalide
+    if (!scan || !scan.ok) {
+        statusDiv.innerHTML = "❌ Scan invalide ou non reconnu";
+        statusDiv.style.color = "#fca5a5";
+        nameDiv.innerText = "—";
+        descDiv.innerText = "—";
+        locDiv.innerText = "—";
+        expDiv.innerText = "—";
+        return;
+    }
+
+    const name = scan.name || "Inconnu";
+    const description = scan.description || "";
+    const actualLoc = scan.location || "Aucune";
+    
+    // Détermination palette attendue
+    let expectedLoc = "Non défini";
+    Object.keys(palettesConfig).forEach(pName => {
+        const rules = palettesConfig[pName];
+        if (rules[name] !== undefined) {
+            expectedLoc = pName;
+        }
+    });
+
+    // Mise à jour affichage
+    nameDiv.innerText = name;
+    descDiv.innerText = description || "—";
+    locDiv.innerText = actualLoc;
+    expDiv.innerText = expectedLoc;
+
+    // Détermination conformité
+    if (expectedLoc === "Non défini") {
+        statusDiv.innerHTML = "❔ Aucun emplacement attendu pour cet article";
+        statusDiv.style.color = "#cbd5f5";
+        return;
+    }
+
+    if (expectedLoc === actualLoc) {
+        statusDiv.innerHTML = "✔ Le carton est sur la bonne palette";
+        statusDiv.style.color = "#4ade80";
+    } else {
+        statusDiv.innerHTML = `✖ Mauvaise palette : attendu <strong>${expectedLoc}</strong>`;
+        statusDiv.style.color = "#fca5a5";
+    }
+}
+
+// Activation du handler dans ws.onmessage
+ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+
+    if (msg.inventree) {
+        lastPalettes = msg.inventree.palettes;
+        updateDashboard();
+    }
+
+    if (msg.scan) {
+        handleScan(msg.scan);
+    }
+};
+
+    
     // =============================
     // Events sur Config tab
     // =============================
