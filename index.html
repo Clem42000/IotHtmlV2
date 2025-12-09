@@ -452,13 +452,13 @@
                     <h3>Caméra entrepôt</h3>
                     <div class="camera-preview">
                         <img id="camera-stream"
-                             src="http://192.168.100.182:5000"
+                             src="http://192.168.100.182:5000/video_feed"
                              alt="Flux caméra"
                              style="display:none;">
                     
                         <div class="placeholder" id="camera-placeholder">
                             Connexion au flux vidéo…<br>
-                            http://192.168.100.182:5000
+                            http://192.168.100.182:5000/video_feed
                         </div>
                     </div>
 
@@ -574,7 +574,7 @@
 
     // Refresh anti-freeze (20 s)
     setInterval(() => {
-        camImg.src = "http://192.168.100.182:5000?ts=" + Date.now();
+        camImg.src = "http://192.168.100.182:5000/video_feed?ts=" + Date.now();
 
     }, 20000);
 
