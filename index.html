@@ -451,11 +451,11 @@
                 <div class="card camera-card">
                     <h3>Caméra entrepôt</h3>
                     <div class="camera-preview">
-                        <img id="camera-stream" src="http://192.168.100.182:5000/"
+                        <img id="camera-stream" src="http://192.168.100.182:5000"
                              alt="Flux caméra" style="display:none;">
                         <div class="placeholder" id="camera-placeholder">
                             Connexion au flux vidéo…<br>
-                            192.168.100.139
+                             http://192.168.100.182:5000
                         </div>
                     </div>
                     <div style="font-size: 12px; color:#9ca3af;">
@@ -565,12 +565,12 @@
     camImg.onerror = () => {
         camImg.style.display = 'none';
         camPlaceholder.style.display = 'block';
-        camPlaceholder.innerHTML = "Flux vidéo indisponible<br>192.168.100.139";
+        camPlaceholder.innerHTML = "Flux vidéo indisponible<br>http://192.168.100.182:5000";
     };
 
     // Refresh anti-freeze (20 s)
     setInterval(() => {
-        camImg.src = " //http://192.168.100.182:5000/?ts=" + Date.now();
+        camImg.src = " http://192.168.100.182:5000?ts=" + Date.now();
     }, 20000);
 
     // =============================
