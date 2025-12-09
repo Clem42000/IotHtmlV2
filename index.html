@@ -294,6 +294,42 @@
 
     <!-- ===== HEADER ===== -->
     <header>
+      <div class="card" style="margin-bottom: 30px;">
+    <h3>
+        📷 Caméra Entrepôt — Vue en Direct
+    </h3>
+
+    <div class="camera-preview" style="height: 400px;">
+        <img id="camera-main"
+             src="http://192.168.100.145:81/stream"
+             alt="Flux Vidéo"
+             style="width:100%; height:100%; object-fit:cover; display:none;">
+        <div id="camera-placeholder" class="placeholder">
+            Connexion au flux vidéo…
+        </div>
+    </div>
+</div>
+
+<script>
+    const camMain = document.getElementById("camera-main");
+    const camPlaceholder = document.getElementById("camera-placeholder");
+
+    camMain.onload = () => {
+        camMain.style.display = "block";
+        camPlaceholder.style.display = "none";
+    };
+
+    camMain.onerror = () => {
+        camMain.style.display = "none";
+        camPlaceholder.style.display = "block";
+        camPlaceholder.innerHTML = "Flux vidéo indisponible<br>192.168.100.145";
+    };
+
+    setInterval(() => {
+        camMain.src = "http://192.168.100.145:81/stream?ts=" + Date.now();
+    }, 20000);
+</script>
+
         <h1>Surveillance IoT – Gestion de Stock</h1>
         <p>Raspberry Pi · Websocket temps réel · Inventree API</p>
     </header>
@@ -322,7 +358,7 @@
         
         <div class="camera-preview" id="cameraA1">
             <img id="cameraA1-stream"
-                 src="http://192.168.100.145:81/stream"
+                 src="http://192.168.100.139:81/stream"
                  alt="Flux Caméra"
                  style="width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 10px;">
             <div class="placeholder" id="cameraA1-placeholder">
@@ -514,35 +550,58 @@
         }
 
         // ➤ Génère automatiquement les cards Inventree dans la section dédiée
-        function generateInventreeCards(palettes) {
-            const container = document.getElementById("inventree-container");
-            container.innerHTML = ""; // reset
+        <script>
+function generateInventreeCards(palettes) {
+    const container = document.getElementById("inventree-container");
+    container.innerHTML = "";
 
-            palettes.forEach(palette => {
-                let html = `
-                    <div class="inv-card">
-                        <div class="inv-title">${palette.name}</div>
+    palettes.forEach(p => {
+
+        // Déterminer la couleur en fonction du statut
+        let borderColor = "#3b82f6";
+        if (p.status === "Vide") borderColor = "#facc15";
+        if (p.status === "Surcharge") borderColor = "#ef4444";
+
+        let html = `
+        <div class="inv-card" style="border-color:${borderColor};">
+            <div class="inv-title">${p.name}</div>
+            <div class="inv-subtitle">
+                📦 ${p.total_qty} articles — ⚖ ${p.total_weight.toFixed(2)} kg — 💰 ${p.total_price.toFixed(2)} €
+            </div>
+        `;
+
+        if (!p.items || p.items.length === 0) {
+            html += `<div class="inv-empty">Aucun article dans cette palette</div>`;
+        } else {
+            p.items.forEach(item => {
+                html += `
+                <div class="inv-item" style="display:flex; gap:12px; align-items:center;">
+                    <img src="${item.thumbnail || ''}" 
+                         style="width:50px; height:50px; object-fit:cover; border-radius:8px; border:1px solid #374151;">
+                    
+                    <div style="flex:1;">
+                        <div style="font-weight:600; color:#bfdbfe;">${item.name}</div>
+                        <div style="font-size:12px; color:#9ca3af;">
+                            Qty: ${item.qty} — 
+                            ${item.weight ? `Poids: ${item.weight} kg —` : ""}
+                            ${item.price ? `Prix: ${item.price} €` : ""}
+                        </div>
+                    </div>
+
+                    <div style="color:#93c5fd; font-weight:600;">
+                        x${item.qty}
+                    </div>
+                </div>
                 `;
-
-                // Contenu de la palette
-                if (!palette.items || palette.items.length === 0) {
-                    html += `<div class="inv-empty">Aucun article</div>`;
-                } else {
-                    palette.items.forEach(item => {
-                        html += `
-                            <div class="inv-item">
-                                <span>${item.name}</span>
-                                <span class="qty">${item.qty}</span>
-                            </div>
-                        `;
-                    });
-                }
-
-                html += `</div>`; // fermeture card
-                container.innerHTML += html;
             });
         }
-    </script>
+
+        html += `</div>`;
+        container.innerHTML += html;
+    });
+}
+</script>
+
 
 </div> <!-- Fin container -->
 </body>
