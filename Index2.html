@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surveillance IoT – Gestion de Stock</title>
+
+    <!-- Police -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles globaux -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #050816 0%, #111827 50%, #020617 100%);
+            color: #e0e6ed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: radial-gradient(circle at top left, #1d4ed8 0, #111827 45%, #020617 100%);
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.8);
+            margin-bottom: 30px;
+            border: 1px solid rgba(129, 140, 248, 0.45);
+        }
+
+        header h1 {
+            font-size: 30px;
+            font-weight: 700;
+            color: #93c5fd;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #9ca3af;
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        /* ===== GRID GÉNÉRALE ===== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: radial-gradient(circle at top left, #1f2937 0, #020617 70%);
+            border-radius: 18px;
+            padding: 22px 22px 20px;
+            box-shadow: 0 14px 40px rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(75, 85, 99, 0.6);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(96, 165, 250, 0.7);
+            box-shadow: 0 20px 50px rgba(30, 64, 175, 0.75);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #bfdbfe;
+        }
+
+        /* ===== STATS GLOBALES ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: radial-gradient(circle at top, #1e293b 0, #020617 70%);
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            box-shadow: 0 12px 36px rgba(15, 23, 42, 0.9);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #9ca3af;
+            font-weight: 500;
+            letter-spacing: 0.07em;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #93c5fd;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #22c55e 0%, #4ade80 40%, #a3e635 100%);
+            border-radius: 999px;
+            transition: width 0.4s ease-out;
+        }
+
+        /* ===== ZONES CAMERAS ===== */
+        .camera-card .camera-preview {
+            width: 100%;
+            height: 200px;
+            background: #020617;
+            border-radius: 14px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            box-shadow: inset 0 0 25px rgba(15, 23, 42, 0.9);
+        }
+
+        .camera-preview .placeholder {
+            color: #4b5563;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 14px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .status-ok {
+            background: rgba(22, 163, 74, 0.22);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.9);
+        }
+
+        .status-anomalie {
+            background: rgba(220, 38, 38, 0.22);
+            color: #fca5a5;
+            border: 1px solid rgba(248, 113, 113, 0.95);
+        }
+
+        .status-vide {
+            background: rgba(234, 179, 8, 0.18);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.9);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .info-item {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(31, 41, 55, 0.95);
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #6b7280;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .info-item .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #bfdbfe;
+        }
+
+        .info-item .timestamp {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        /* ===== SECTION INVENTREE (cards palettes) ===== */
+        .section-title {
+            margin: 35px 0 10px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #93c5fd;
+        }
+
+        .inv-card {
+            background: radial-gradient(circle at top left, #020617 0, #020617 50%, #020617 100%);
+            border-radius: 16px;
+            padding: 18px 16px 14px;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(55, 65, 81, 0.95);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .inv-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 40px rgba(30, 64, 175, 0.9);
+            border-color: rgba(129, 140, 248, 0.9);
+        }
+
+        .inv-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #bfdbfe;
+        }
+
+        .inv-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .inv-item {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 10px;
+            padding: 7px 10px;
+            margin-top: 6px;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #e5e7eb;
+        }
+
+        .inv-item span.qty {
+            font-weight: 600;
+            color: #93c5fd;
+        }
+
+        .inv-empty {
+            color: #6b7280;
+            font-style: italic;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 22px;
+            }
+            .stat-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <!-- ===== HEADER ===== -->
+    <header>
+      <div class="card" style="margin-bottom: 30px;">
+    <h3>
+        📷 Caméra Entrepôt — Vue en Direct
+    </h3>
+
+    <div class="camera-preview" style="height: 400px;">
+        <img id="camera-main"
+             src="http://192.168.100.145:81/stream"
+             alt="Flux Vidéo"
+             style="width:100%; height:100%; object-fit:cover; display:none;">
+        <div id="camera-placeholder" class="placeholder">
+            Connexion au flux vidéo…
+        </div>
+    </div>
+</div>
+
+<script>
+    const camMain = document.getElementById("camera-main");
+    const camPlaceholder = document.getElementById("camera-placeholder");
+
+    camMain.onload = () => {
+        camMain.style.display = "block";
+        camPlaceholder.style.display = "none";
+    };
+
+    camMain.onerror = () => {
+        camMain.style.display = "none";
+        camPlaceholder.style.display = "block";
+        camPlaceholder.innerHTML = "Flux vidéo indisponible<br>192.168.100.145";
+    };
+
+    setInterval(() => {
+        camMain.src = "http://192.168.100.145:81/stream?ts=" + Date.now();
+    }, 20000);
+</script>
+
+        <h1>Surveillance IoT – Gestion de Stock</h1>
+        <p>Raspberry Pi · Websocket temps réel · Inventree API</p>
+    </header>
+
+    <!-- ===== STATS GLOBALES ===== -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Colis Total</div>
+            <div class="stat-value" id="total-packages">0</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-label">Taux de Remplissage</div>
+            <div class="stat-value" id="fill-rate">0%</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="fill-progress"></div>
+            </div>
+        </div>
+    </div>
+    <!-- ===== ZONES CAMÉRAS ===== -->
+    <div class="dashboard-grid">
+
+        <!-- ===== ZONE A1 ===== -->
+        <div class="card camera-card">
+            <h3>Zone A1</h3>
+        
+        <div class="camera-preview" id="cameraA1">
+            <img id="cameraA1-stream"
+                 src="http://192.168.100.139:81/stream"
+                 alt="Flux Caméra"
+                 style="width: 100%; height: 100%; object-fit: cover; display: none; border-radius: 10px;">
+            <div class="placeholder" id="cameraA1-placeholder">
+                Caméra ESP32-CAM<br>Connexion au flux…
+            </div>
+        </div>
+            <script>
+    const cam = document.getElementById("cameraA1-stream");
+    const placeholder = document.getElementById("cameraA1-placeholder");
+
+    // Montrer l’image quand le flux fonctionne
+    cam.onload = () => {
+        cam.style.display = "block";
+        placeholder.style.display = "none";
+    };
+
+    // Si erreur → message propre
+    cam.onerror = () => {
+        cam.style.display = "none";
+        placeholder.style.display = "block";
+        placeholder.innerHTML = "Flux caméra indisponible<br>192.168.100.145";
+    };
+
+    // Redémarrage automatique toutes les 20 secondes si la caméra freeze
+    setInterval(() => {
+        cam.src = "http://192.168.100.145:81/stream?ts=" + Date.now();
+    }, 20000);
+</script>
+
+
+
+            <span id="zoneA1-status" class="status-badge status-ok">OK</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Colis détectés</label>
+                    <div class="value" id="zoneA1-packages">0</div>
+                    <div class="timestamp" id="zoneA1-time">--:--:--</div>
+                </div>
+
+                <div class="info-item">
+                    <label>MAJ</label>
+                    <div class="value">Auto</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ZONE A2 ===== -->
+        <div class="card camera-card">
+            <h3>Zone A2</h3>
+
+            <div class="camera-preview">
+                <div class="placeholder">Caméra #2</div>
+            </div>
+
+            <span id="zoneA2-status" class="status-badge status-ok">OK</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Colis détectés</label>
+                    <div class="value" id="zoneA2-packages">0</div>
+                    <div class="timestamp" id="zoneA2-time">--:--:--</div>
+                </div>
+
+                <div class="info-item">
+                    <label>MAJ</label>
+                    <div class="value">Auto</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ZONE A3 ===== -->
+        <div class="card camera-card">
+            <h3>Zone A3</h3>
+
+            <div class="camera-preview">
+                <div class="placeholder">Caméra #3</div>
+            </div>
+
+            <span id="zoneA3-status" class="status-badge status-ok">OK</span>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Colis détectés</label>
+                    <div class="value" id="zoneA3-packages">0</div>
+                    <div class="timestamp" id="zoneA3-time">--:--:--</div>
+                </div>
+
+                <div class="info-item">
+                    <label>MAJ</label>
+                    <div class="value">Auto</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========== SECTION INVENTREE ========== -->
+    <h2 class="section-title">Inventaire — Emplacements et Contenu</h2>
+
+    <div class="dashboard-grid" id="inventree-container">
+        <!-- Dynamically filled by WebSocket + API Inventree -->
+    </div>
+    <!-- ===== SCRIPT WEBSOCKET ===== -->
+    <script>
+        console.log("Connexion WebSocket…");
+
+        // 📡 Connexion directe au Raspberry Pi
+        const ws = new WebSocket("ws://192.168.100.112:8765");
+
+        ws.onopen = () => {
+            console.log("WebSocket connecté !");
+        };
+
+        ws.onerror = (err) => {
+            console.error("Erreur WebSocket", err);
+        };
+
+        ws.onclose = () => {
+            console.warn("WebSocket fermé");
+        };
+
+        // =====================================================================
+        //                  🔥 RECEPTION DES DONNÉES WEBSOCKET
+        // =====================================================================
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            // =============================
+            // 🟦 GLOBAL STATS
+            // =============================
+            document.getElementById("total-packages").innerText = data.global.total;
+            document.getElementById("fill-rate").innerText = data.global.fill_rate + "%";
+            document.getElementById("fill-progress").style.width = data.global.fill_rate + "%";
+
+            // =============================
+            // 🟧 ZONE A1
+            // =============================
+            document.getElementById("zoneA1-packages").innerText = data.zoneA1.packages;
+            document.getElementById("zoneA1-status").innerText = data.zoneA1.status;
+            document.getElementById("zoneA1-time").innerText = new Date().toLocaleTimeString();
+
+            // Coloration statut
+            updateStatusBadge("zoneA1-status", data.zoneA1.status);
+
+            // =============================
+            // 🟥 ZONE A2
+            // =============================
+            document.getElementById("zoneA2-packages").innerText = data.zoneA2.packages;
+            document.getElementById("zoneA2-status").innerText = data.zoneA2.status;
+            document.getElementById("zoneA2-time").innerText = new Date().toLocaleTimeString();
+
+            updateStatusBadge("zoneA2-status", data.zoneA2.status);
+
+            // =============================
+            // 🟩 ZONE A3
+            // =============================
+            document.getElementById("zoneA3-packages").innerText = data.zoneA3.packages;
+            document.getElementById("zoneA3-status").innerText = data.zoneA3.status;
+            document.getElementById("zoneA3-time").innerText = new Date().toLocaleTimeString();
+
+            updateStatusBadge("zoneA3-status", data.zoneA3.status);
+
+            // =============================
+            // 📦 INVENTREE : Génération des cards palettes
+            // =============================
+            if (data.inventree && data.inventree.palettes) {
+                generateInventreeCards(data.inventree.palettes);
+            }
+        };
+
+
+        // =====================================================================
+        //                  🔧 Fonctions Utilitaires
+        // =====================================================================
+
+        // ➤ Met à jour automatiquement la couleur du badge de statut
+        function updateStatusBadge(elementId, status) {
+            const el = document.getElementById(elementId);
+            el.classList.remove("status-ok", "status-anomalie", "status-vide");
+
+            if (status.toLowerCase() === "ok") {
+                el.classList.add("status-ok");
+            } else if (status.toLowerCase() === "anomalie") {
+                el.classList.add("status-anomalie");
+            } else {
+                el.classList.add("status-vide");
+            }
+        }
+
+        // ➤ Génère automatiquement les cards Inventree dans la section dédiée
+        <script>
+function generateInventreeCards(palettes) {
+    const container = document.getElementById("inventree-container");
+    container.innerHTML = "";
+
+    palettes.forEach(p => {
+
+        // Déterminer la couleur en fonction du statut
+        let borderColor = "#3b82f6";
+        if (p.status === "Vide") borderColor = "#facc15";
+        if (p.status === "Surcharge") borderColor = "#ef4444";
+
+        let html = `
+        <div class="inv-card" style="border-color:${borderColor};">
+            <div class="inv-title">${p.name}</div>
+            <div class="inv-subtitle">
+                📦 ${p.total_qty} articles — ⚖ ${p.total_weight.toFixed(2)} kg — 💰 ${p.total_price.toFixed(2)} €
+            </div>
+        `;
+
+        if (!p.items || p.items.length === 0) {
+            html += `<div class="inv-empty">Aucun article dans cette palette</div>`;
+        } else {
+            p.items.forEach(item => {
+                html += `
+                <div class="inv-item" style="display:flex; gap:12px; align-items:center;">
+                    <img src="${item.thumbnail || ''}" 
+                         style="width:50px; height:50px; object-fit:cover; border-radius:8px; border:1px solid #374151;">
+                    
+                    <div style="flex:1;">
+                        <div style="font-weight:600; color:#bfdbfe;">${item.name}</div>
+                        <div style="font-size:12px; color:#9ca3af;">
+                            Qty: ${item.qty} — 
+                            ${item.weight ? `Poids: ${item.weight} kg —` : ""}
+                            ${item.price ? `Prix: ${item.price} €` : ""}
+                        </div>
+                    </div>
+
+                    <div style="color:#93c5fd; font-weight:600;">
+                        x${item.qty}
+                    </div>
+                </div>
+                `;
+            });
+        }
+
+        html += `</div>`;
+        container.innerHTML += html;
+    });
+}
+</script>
+
+
+</div> <!-- Fin container -->
+</body>
+</html>
