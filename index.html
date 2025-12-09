@@ -106,6 +106,39 @@
             gap: 8px;
         }
 
+        <!-- ===================== SCAN QR & CONTROLE PALETTE ===================== -->
+<div class="dashboard-grid" style="margin-top: 30px;">
+    <div class="card" style="grid-column: span 2;">
+        <h3>📡 Scan QR – Contrôle palette</h3>
+
+        <div class="info-grid" style="margin-top: 10px;">
+            <div class="info-item">
+                <label>Palette attendue (à contrôler)</label>
+                <select id="scan-expected-palette" style="width:100%; padding:6px; border-radius:8px; border:none; background:#0f172a; color:#e5e7eb;">
+                    <option value="">— Choisir une palette —</option>
+                </select>
+            </div>
+
+            <div class="info-item">
+                <label>Scan code-barres</label>
+                <input
+                    id="scan-barcode-input"
+                    type="text"
+                    placeholder='Clique ici puis scanne le QR {"stockitem": 17}'
+                    style="width:100%; padding:6px; border-radius:8px; border:none; background:#020617; color:#e5e7eb;">
+                <div class="timestamp">Appuie sur Entrée après le scan si ton lecteur ne l’envoie pas.</div>
+            </div>
+        </div>
+
+        <div id="scan-result-card" class="info-item" style="margin-top:15px;">
+            <label>Résultat du dernier scan</label>
+            <div id="scan-result-text" class="timestamp">
+                En attente de scan…
+            </div>
+        </div>
+    </div>
+</div>
+
         /* Stats */
         .stats-grid {
             display: grid;
@@ -508,82 +541,125 @@
 </div>
 
 <script>
-    // =============================
-    // Gestion des onglets
-    // =============================
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabPanels = document.querySelectorAll('.tab-panel');
+    console.log("Connexion WebSocket…");
 
-    tabButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const target = btn.getAttribute('data-tab');
+    const ws = new WebSocket("ws://192.168.100.112:8765");
 
-            tabButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+    // Règles palettes -> cartons attendus
+    // Alimenté depuis ta fenêtre de config palettes (paletteConfig),
+    // ici on récupère ce qui est stocké en localStorage si présent.
+    let paletteRules = {};
+    try {
+        paletteRules = JSON.parse(localStorage.getItem("paletteRules") || "{}");
+    } catch (e) {
+        paletteRules = {};
+    }
 
-            tabPanels.forEach(p => {
-                if (p.id === 'tab-' + target) p.classList.add('active');
-                else p.classList.remove('active');
-            });
+    // Mémorise les palettes courantes pour le select
+    let currentPalettes = [];
+
+    function savePaletteRules() {
+        localStorage.setItem("paletteRules", JSON.stringify(paletteRules));
+    }
+
+    // Remplit les <select> de palette (scan + éventuelle config)
+    function updatePaletteSelectOptions(palettes) {
+        currentPalettes = palettes;
+        const scanSelect = document.getElementById("scan-expected-palette");
+        if (!scanSelect) return;
+
+        const currentValue = scanSelect.value;
+        scanSelect.innerHTML = '<option value="">— Choisir une palette —</option>';
+
+        palettes.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.name;
+            opt.textContent = p.name;
+            scanSelect.appendChild(opt);
         });
-    });
 
-    // =============================
-    // Gestion caméra
-    // =============================
-    const camImg = document.getElementById('camera-stream');
-    const camPlaceholder = document.getElementById('camera-placeholder');
-
-    camImg.onload = () => {
-        camImg.style.display = 'block';
-        camPlaceholder.style.display = 'none';
-    };
-
-    camImg.onerror = () => {
-        camImg.style.display = 'none';
-        camPlaceholder.style.display = 'block';
-        camPlaceholder.innerHTML = "Flux vidéo indisponible<br>192.168.100.139";
-    };
-
-    setInterval(() => {
-        camImg.src = "http://192.168.100.139:81/stream?ts=" + Date.now();
-    }, 20000);
-
-    // =============================
-    // WebSocket + Inventree
-    // =============================
-    const ws = new WebSocket("ws://192.168.100.112:8765"); // adapte l’IP si besoin
-
-    let lastPalettes = [];
-    let palettesConfig = {}; // { "PALETTE 1": { "CARTON A": 2, ... }, ... }
-
-    let lastScan = null;           // objet renvoyé par le serveur
-    let selectedPaletteName = "";  // palette cible pour le scan
-
-    // Charger configuration depuis localStorage
-    function loadConfig() {
-        try {
-            const raw = localStorage.getItem('palettesConfig');
-            palettesConfig = raw ? JSON.parse(raw) : {};
-        } catch (e) {
-            console.error("Erreur parse palettesConfig:", e);
-            palettesConfig = {};
+        // essaie de garder la valeur précédente si elle existe encore
+        if (currentValue) {
+            scanSelect.value = currentValue;
         }
     }
 
-    function saveConfig() {
-        localStorage.setItem('palettesConfig', JSON.stringify(palettesConfig));
-        alert("Configuration palettes sauvegardée (localStorage navigateur).");
+    // Mise en forme du résultat de scan
+    function highlightPalette(expectedPalette) {
+        // enlève le highlight existant
+        document.querySelectorAll(".inv-card").forEach(card => {
+            card.style.boxShadow = "";
+            card.style.borderColor = "rgba(55, 65, 81, 0.95)";
+        });
+
+        if (!expectedPalette) return;
+
+        const card = document.querySelector(`.inv-card[data-palette-name="${expectedPalette}"]`);
+        if (card) {
+            card.style.boxShadow = "0 0 25px rgba(34, 197, 94, 0.7)";
+            card.style.borderColor = "#22c55e";
+        }
     }
 
-    loadConfig();
+    function handleScanResult(scan) {
+        const resultDiv = document.getElementById("scan-result-text");
+        if (!resultDiv) return;
 
+        if (scan.error) {
+            resultDiv.innerHTML = `❌ Erreur lors du scan : <span style="color:#f97373;">${scan.error}</span>`;
+            highlightPalette(null);
+            return;
+        }
+
+        const expectedPalette = document.getElementById("scan-expected-palette").value;
+        const article = scan.article || "(article inconnu)";
+        const paletteActuelle = scan.palette_actuelle || "(palette inconnue)";
+
+        const rules = window.paletteRules || {};
+        const expectedArticles = rules[expectedPalette] || [];
+
+        let doitEtreIci = null;
+        if (expectedPalette && expectedArticles.length > 0) {
+            // true si l’article fait partie de la liste attendue
+            doitEtreIci = expectedArticles.includes(article);
+        }
+
+        let message = `
+            📦 Article scanné : <strong>${article}</strong><br>
+            📍 Palette InvenTree actuelle : <strong>${paletteActuelle}</strong><br>
+            🎯 Palette attendue (sélectionnée) : <strong>${expectedPalette || "—"}</strong><br>
+        `;
+
+        if (!expectedPalette) {
+            message += `<br><span style="color:#fbbf24;">Sélectionne une palette à contrôler pour savoir s’il doit y être.</span>`;
+            highlightPalette(null);
+        } else if (doitEtreIci === null) {
+            message += `<br><span style="color:#fbbf24;">Aucune règle définie pour ${expectedPalette} dans la configuration palettes.</span>`;
+            highlightPalette(expectedPalette);
+        } else if (doitEtreIci) {
+            message += `<br><span style="color:#22c55e; font-weight:600;">✔ Cet article est attendu sur cette palette.</span>`;
+            highlightPalette(expectedPalette);
+        } else {
+            message += `<br><span style="color:#f97373; font-weight:600;">❌ Cet article ne fait pas partie des cartons attendus pour cette palette.</span>`;
+            highlightPalette(expectedPalette);
+        }
+
+        resultDiv.innerHTML = message;
+    }
+
+    // Gestion WebSocket
     ws.onopen = () => {
-        console.log("WebSocket connecté");
+        console.log("WebSocket connecté !");
+        // Premier refresh
+        ws.send(JSON.stringify({ action: "refresh_inventory" }));
+        // Refresh régulier toutes les 10s
+        setInterval(() => {
+            ws.send(JSON.stringify({ action: "refresh_inventory" }));
+        }, 10000);
     };
 
     ws.onerror = (err) => {
-        console.error("Erreur WebSocket :", err);
+        console.error("Erreur WebSocket", err);
     };
 
     ws.onclose = () => {
@@ -593,385 +669,45 @@
     ws.onmessage = (event) => {
         const msg = JSON.parse(event.data);
 
+        // Inventaire complet (palettes)
         if (msg.inventree && msg.inventree.palettes) {
-            lastPalettes = msg.inventree.palettes;
-            updateDashboard();
+            const palettes = msg.inventree.palettes;
+            // ta fonction de rendu des palettes
+            generateInventreeCards(palettes);
+            updatePaletteSelectOptions(palettes);
         }
 
+        // Résultat d’un scan
         if (msg.scan) {
-            lastScan = msg.scan;
-            updateScanPanel();
+            handleScanResult(msg.scan);
         }
     };
 
-    // =============================
-    // Comparaison config vs réel
-    // =============================
-    function computeComplianceForPalette(palette) {
-        const name = palette.name || "Palette inconnue";
-        const expected = palettesConfig[name] || {};
-        const actual = {};
+    // ======================== GESTION DU CHAMP DE SCAN ========================
 
-        (palette.items || []).forEach(it => {
-            const n = it.name || "Sans nom";
-            const q = Number(it.qty || it.quantity || 0);
-            actual[n] = (actual[n] || 0) + q;
-        });
-
-        const errors = [];
-        let ok = true;
-
-        Object.keys(expected).forEach(cartonName => {
-            const expQty = Number(expected[cartonName]);
-            const actQty = Number(actual[cartonName] || 0);
-
-            if (actQty < expQty) {
-                ok = false;
-                errors.push(`Manque ${expQty - actQty} × ${cartonName}`);
-            } else if (actQty > expQty) {
-                ok = false;
-                errors.push(`${actQty - expQty} × ${cartonName} en trop`);
-            }
-        });
-
-        Object.keys(actual).forEach(cartonName => {
-            if (!(cartonName in expected)) {
-                ok = false;
-                errors.push(`Carton non prévu : ${cartonName} (x${actual[cartonName]})`);
-            }
-        });
-
-        let status = "unknown";
-        if (Object.keys(expected).length === 0) status = "unknown";
-        else if (ok) status = "ok";
-        else status = "error";
-
-        return { status, errors, expected, actual };
-    }
-
-    // =============================
-    // Mise à jour dashboard
-    // =============================
-    function updateDashboard() {
-        let totalColis = 0;
-        lastPalettes.forEach(p => totalColis += Number(p.total_qty || 0));
-
-        document.getElementById('stat-total').innerText = totalColis;
-        document.getElementById('stat-palettes').innerText = lastPalettes.length;
-
-        const fillRate = Math.min(100, Math.round((totalColis / 100) * 100));
-        document.getElementById('stat-fill').innerText = fillRate + "%";
-        document.getElementById('fill-progress').style.width = fillRate + "%";
-
-        renderPalettesSurveillance();
-        renderConfigTab();
-        updatePaletteSelectOptions();
-    }
-
-    // =============================
-    // Rendu pallettes (Surveillance)
-    // =============================
-    function renderPalettesSurveillance() {
-        const container = document.getElementById('palettes-container');
-        container.innerHTML = "";
-
-        lastPalettes.forEach(palette => {
-            const { status, errors, expected } = computeComplianceForPalette(palette);
-            const pName = palette.name || "Palette inconnue";
-
-            let statusClass = "status-unknown";
-            let statusText = "Configuration manquante";
-
-            if (status === "ok") {
-                statusClass = "status-ok";
-                statusText = "Palette conforme";
-            } else if (status === "error") {
-                statusClass = "status-error";
-                statusText = "Palette non conforme";
-            }
-
-            let itemsHtml = "";
-            (palette.items || []).forEach(item => {
-                const n = item.name || "Sans nom";
-                const q = Number(item.qty || item.quantity || 0);
-                const exp = expected[n] !== undefined ? expected[n] : null;
-
-                itemsHtml += `
-                    <div>
-                        <span class="name">${n}</span>
-                        <span>
-                            <span class="qty">${q}</span>
-                            ${exp !== null ? `<span class="expect">(attendu : ${exp})</span>` : ""}
-                        </span>
-                    </div>
-                `;
-            });
-
-            let errorHtml = "";
-            if (errors.length > 0) {
-                errorHtml = `<div class="error-details">${errors.join("<br>")}</div>`;
-            }
-
-            const card = document.createElement('div');
-            card.className = "card";
-            card.innerHTML = `
-                <h3>${pName}</h3>
-                <div class="palette-status ${statusClass}">
-                    ${status === "ok" ? "✔" : (status === "error" ? "✖" : "?")} ${statusText}
-                </div>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <label>Colis</label>
-                        <div class="value">${palette.total_qty || 0}</div>
-                    </div>
-                    <div class="info-item">
-                        <label>Articles uniques</label>
-                        <div class="value">${(palette.items || []).length}</div>
-                    </div>
-                </div>
-                <div class="items-list">
-                    ${itemsHtml || "<div><span class='name'>Aucun article</span></div>"}
-                </div>
-                ${errorHtml}
-            `;
-
-            container.appendChild(card);
-        });
-    }
-
-    // =============================
-    // Rendu configuration palettes
-    // =============================
-    function renderConfigTab() {
-        const container = document.getElementById('config-container');
-        container.innerHTML = "";
-
-        lastPalettes.forEach(palette => {
-            const pName = palette.name || "Palette inconnue";
-            if (!palettesConfig[pName]) palettesConfig[pName] = {};
-
-            const card = document.createElement('div');
-            card.className = "config-card";
-
-            let linesHtml = "";
-            const currentConfig = palettesConfig[pName];
-            const cartonNames = Object.keys(currentConfig);
-
-            if (cartonNames.length === 0) {
-                linesHtml += createConfigLineHtml(pName, "", "");
-            } else {
-                cartonNames.forEach(cartonName => {
-                    const qty = currentConfig[cartonName];
-                    linesHtml += createConfigLineHtml(pName, cartonName, qty);
-                });
-            }
-
-            card.innerHTML = `
-                <h4>${pName}</h4>
-                <div style="font-size:12px; color:#9ca3af; margin-bottom:6px;">
-                    Définis ici les cartons attendus sur cette palette.
-                </div>
-                <div class="config-lines" data-palette="${pName}">
-                    ${linesHtml}
-                </div>
-                <div class="config-actions">
-                    <button class="config-btn small" data-action="add-line" data-palette="${pName}">+ Ajouter un carton</button>
-                    <button class="config-btn small" data-action="fill-from-actual" data-palette="${pName}">🪄 Prendre l'état actuel comme référence</button>
-                </div>
-            `;
-
-            container.appendChild(card);
-        });
-
-        attachConfigEvents();
-    }
-
-    function createConfigLineHtml(paletteName, cartonName, qty) {
-        const safeName = cartonName || "";
-        const safeQty = qty !== undefined && qty !== null && qty !== "" ? qty : "";
-        return `
-            <div class="config-line" data-palette="${paletteName}">
-                <input type="text" class="cfg-name" placeholder="Nom du carton (ex: CARTON A)" value="${safeName}">
-                <input type="number" class="cfg-qty" placeholder="Qté" min="0" value="${safeQty}">
-                <button class="config-btn small cfg-remove">✖</button>
-            </div>
-        `;
-    }
-
-    function attachConfigEvents() {
-        const configContainer = document.getElementById('config-container');
-
-        configContainer.addEventListener('click', (e) => {
-            const btn = e.target.closest('button');
-            if (!btn) return;
-
-            const action = btn.getAttribute('data-action');
-            const paletteName = btn.getAttribute('data-palette');
-
-            if (action === 'add-line') {
-                const linesDiv = btn.closest('.config-card').querySelector('.config-lines');
-                linesDiv.insertAdjacentHTML('beforeend', createConfigLineHtml(paletteName, "", ""));
-            }
-
-            if (action === 'fill-from-actual') {
-                const palette = lastPalettes.find(p => p.name === paletteName);
-                if (!palette) return;
-
-                const linesDiv = btn.closest('.config-card').querySelector('.config-lines');
-                linesDiv.innerHTML = "";
-
-                const actual = {};
-                (palette.items || []).forEach(it => {
-                    const n = it.name || "Sans nom";
-                    const q = Number(it.qty || it.quantity || 0);
-                    actual[n] = (actual[n] || 0) + q;
-                });
-
-                palettesConfig[paletteName] = {};
-                Object.keys(actual).forEach(n => {
-                    const q = actual[n];
-                    palettesConfig[paletteName][n] = q;
-                    linesDiv.insertAdjacentHTML('beforeend', createConfigLineHtml(paletteName, n, q));
-                });
-            }
-
-            if (btn.classList.contains('cfg-remove')) {
-                const line = btn.closest('.config-line');
-                if (line) line.remove();
+    const scanInput = document.getElementById("scan-barcode-input");
+    if (scanInput) {
+        scanInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                const raw = scanInput.value.trim();
+                if (!raw) return;
+                ws.send(JSON.stringify({
+                    action: "scan_barcode",
+                    barcode: raw
+                }));
+                // on garde le code dans le champ pour debug, ou tu peux le vider :
+                // scanInput.value = "";
             }
         });
     }
 
-    document.getElementById('btn-save-config').addEventListener('click', () => {
-        const configContainer = document.getElementById('config-container');
-        palettesConfig = {};
-
-        const allCards = configContainer.querySelectorAll('.config-card');
-        allCards.forEach(card => {
-            const linesDiv = card.querySelector('.config-lines');
-            const paletteName = linesDiv.getAttribute('data-palette');
-            const lines = card.querySelectorAll('.config-line');
-
-            palettesConfig[paletteName] = {};
-
-            lines.forEach(line => {
-                const nameInput = line.querySelector('.cfg-name');
-                const qtyInput = line.querySelector('.cfg-qty');
-                const cartonName = (nameInput.value || "").trim();
-                const qty = Number(qtyInput.value || 0);
-
-                if (cartonName && qty > 0) {
-                    palettesConfig[paletteName][cartonName] = qty;
-                }
-            });
-        });
-
-        saveConfig();
-        renderPalettesSurveillance();
-    });
-
-    // =============================
-    // Palette select pour scan
-    // =============================
-    function updatePaletteSelectOptions() {
-        const select = document.getElementById('scan-palette-select');
-        const previous = select.value;
-
-        select.innerHTML = '<option value="">Palette cible (sélectionne une palette)</option>';
-
-        lastPalettes.forEach(p => {
-            const name = p.name || "Palette inconnue";
-            const opt = document.createElement('option');
-            opt.value = name;
-            opt.textContent = name;
-            select.appendChild(opt);
-        });
-
-        if (previous && [...select.options].some(o => o.value === previous)) {
-            select.value = previous;
-            selectedPaletteName = previous;
-        }
-    }
-
-    document.getElementById('scan-palette-select').addEventListener('change', (e) => {
-        selectedPaletteName = e.target.value;
-        updateScanPanel(); // pour recalculer conforme / pas conforme si on a déjà un scan
-    });
-
-    // =============================
-    // Gestion du scan (input texte)
-    // =============================
-    const scanInput = document.getElementById('scan-input');
-    const scanStatusDiv = document.getElementById('scan-status');
-    const scanMetaDiv = document.getElementById('scan-meta');
-
-    // On essaie de focus l'input dès le chargement
-    window.addEventListener('load', () => {
-        scanInput.focus();
-    });
-
-    scanInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const barcode = scanInput.value.trim();
-            if (!barcode) return;
-
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: "scan", barcode: barcode }));
-                scanStatusDiv.className = "scan-status scan-status-neutral";
-                scanStatusDiv.textContent = "Scan envoyé… en attente de réponse Inventree.";
-            } else {
-                scanStatusDiv.className = "scan-status scan-status-bad";
-                scanStatusDiv.textContent = "WebSocket non connecté.";
-            }
-
-            // On vide l'input pour le prochain scan
-            scanInput.value = "";
-        }
-    });
-
-    function updateScanPanel() {
-        if (!lastScan) {
-            scanStatusDiv.className = "scan-status scan-status-neutral";
-            scanStatusDiv.textContent = "En attente de scan…";
-            scanMetaDiv.textContent = "Aucun scan reçu pour le moment.";
-            return;
-        }
-
-        const ok = lastScan.ok;
-        const name = lastScan.name || "(nom inconnu)";
-        const location = lastScan.location || "(emplacement inconnu)";
-        const barcode = lastScan.barcode || "(code inconnu)";
-        const description = lastScan.description || "";
-
-        if (!selectedPaletteName) {
-            scanStatusDiv.className = "scan-status scan-status-neutral";
-            scanStatusDiv.textContent = "Scan reçu, mais aucune palette cible sélectionnée.";
-        } else {
-            const expectedMap = palettesConfig[selectedPaletteName] || {};
-            const isExpected = !!expectedMap[name];
-
-            if (!ok) {
-                scanStatusDiv.className = "scan-status scan-status-bad";
-                scanStatusDiv.textContent = "Erreur Inventree : " + (lastScan.error || "inconnue");
-            } else if (Object.keys(expectedMap).length === 0) {
-                scanStatusDiv.className = "scan-status scan-status-neutral";
-                scanStatusDiv.textContent = `Scan : ${name} — aucune configuration définie pour ${selectedPaletteName}.`;
-            } else if (isExpected) {
-                scanStatusDiv.className = "scan-status scan-status-ok";
-                scanStatusDiv.textContent = `✔ ${name} est attendu sur ${selectedPaletteName}.`;
-            } else {
-                scanStatusDiv.className = "scan-status scan-status-bad";
-                scanStatusDiv.textContent = `✖ ${name} ne fait pas partie des cartons attendus sur ${selectedPaletteName}.`;
-            }
-        }
-
-        let meta = `Code scanné : ${barcode}`;
-        meta += ` | Article : ${name}`;
-        if (description) meta += ` | ${description}`;
-        meta += ` | Emplacement Inventree : ${location}`;
-        scanMetaDiv.textContent = meta;
-    }
+    // ======================== HOOK AVEC TA FENÊTRE CONFIG PALETTES ========================
+    // Idée : quand tu modifies ta config depuis la fenêtre palettes, tu mets à jour
+    // window.paletteRules puis tu appelles savePaletteRules().
+    // Exemple :
+    //   window.paletteRules["PALETTE 1"] = ["CARTON A", "CARTON B"];
+    //   savePaletteRules();
 </script>
+
 </body>
 </html>
