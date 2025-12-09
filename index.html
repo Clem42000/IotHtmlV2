@@ -4,166 +4,301 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Surveillance IoT – Gestion de Stock</title>
+
+    <!-- Police -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+    <!-- Styles globaux -->
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1d35 100%);
+            background: linear-gradient(135deg, #050816 0%, #111827 50%, #020617 100%);
             color: #e0e6ed;
             min-height: 100vh;
             padding: 20px;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
 
-        header {
-            background: linear-gradient(135deg, #1e2742 0%, #2a3251 100%);
-            padding: 25px 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-            margin-bottom: 30px;
-            border: 1px solid rgba(96,165,250,0.2);
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        header h1 { font-size: 28px; font-weight: 700; color: #60a5fa; }
-        header p { color: #94a3b8; font-size: 14px; }
 
+        /* ===== HEADER ===== */
+        header {
+            background: radial-gradient(circle at top left, #1d4ed8 0, #111827 45%, #020617 100%);
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.8);
+            margin-bottom: 30px;
+            border: 1px solid rgba(129, 140, 248, 0.45);
+        }
+
+        header h1 {
+            font-size: 30px;
+            font-weight: 700;
+            color: #93c5fd;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #9ca3af;
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        /* ===== GRID GÉNÉRALE ===== */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 25px;
-        }
-        .card {
-            background: linear-gradient(135deg, #1e2742 0%, #252d47 100%);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            border: 1px solid rgba(96,165,250,0.15);
+            margin-bottom: 30px;
         }
 
+        /* ===== CARDS ===== */
+        .card {
+            background: radial-gradient(circle at top left, #1f2937 0, #020617 70%);
+            border-radius: 18px;
+            padding: 22px 22px 20px;
+            box-shadow: 0 14px 40px rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(75, 85, 99, 0.6);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(96, 165, 250, 0.7);
+            box-shadow: 0 20px 50px rgba(30, 64, 175, 0.75);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #bfdbfe;
+        }
+
+        /* ===== STATS GLOBALES ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: radial-gradient(circle at top, #1e293b 0, #020617 70%);
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            box-shadow: 0 12px 36px rgba(15, 23, 42, 0.9);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #9ca3af;
+            font-weight: 500;
+            letter-spacing: 0.07em;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #93c5fd;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #22c55e 0%, #4ade80 40%, #a3e635 100%);
+            border-radius: 999px;
+            transition: width 0.4s ease-out;
+        }
+
+        /* ===== ZONES CAMERAS ===== */
         .camera-card .camera-preview {
             width: 100%;
             height: 200px;
-            background: #0f1629;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            background: #020617;
+            border-radius: 14px;
+            margin-bottom: 18px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            border: 2px solid rgba(96,165,250,0.2);
+            justify-content: center;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            box-shadow: inset 0 0 25px rgba(15, 23, 42, 0.9);
         }
-        .camera-preview .placeholder { color: #475569; text-align: center; }
+
+        .camera-preview .placeholder {
+            color: #4b5563;
+            font-size: 14px;
+            text-align: center;
+        }
 
         .status-badge {
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 14px;
+            border-radius: 999px;
+            font-size: 11px;
             font-weight: 600;
-            display: inline-block;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
-        .status-ok { background: rgba(34,197,94,0.2); border: 1px solid #22c55e; color: #22c55e; }
-        .status-vide { background: rgba(251,191,36,0.2); border: 1px solid #fbbf24; color: #fbbf24; }
-        .status-anomalie { background: rgba(239,68,68,0.2); border: 1px solid #ef4444; color: #ef4444; }
 
-        .info-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 15px; margin-top: 15px; }
-        .info-item {
-            background: rgba(15,22,41,0.5);
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(96,165,250,0.1);
+        .status-ok {
+            background: rgba(22, 163, 74, 0.22);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.9);
         }
-        .info-item .value { font-size: 20px; font-weight: 700; color: #60a5fa; }
-        .timestamp { color: #64748b; font-size: 11px; }
 
-        .stats-grid {
+        .status-anomalie {
+            background: rgba(220, 38, 38, 0.22);
+            color: #fca5a5;
+            border: 1px solid rgba(248, 113, 113, 0.95);
+        }
+
+        .status-vide {
+            background: rgba(234, 179, 8, 0.18);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.9);
+        }
+
+        .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 16px;
         }
-        .stat-card {
-            background: linear-gradient(135deg,#1e2742,#252d47);
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            border: 1px solid rgba(96,165,250,0.15);
-        }
-        .stat-value { font-size: 36px; font-weight: 700; color: #60a5fa; }
-        .stat-label { font-size: 12px; color: #64748b; }
 
-        .progress-bar {
-            width: 100%; height: 8px;
-            background: rgba(15,22,41,.8);
+        .info-item {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 10px 12px;
             border-radius: 10px;
-            margin-top: 15px; overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg,#22c55e,#10b981);
-            transition: width .5s ease;
+            border: 1px solid rgba(31, 41, 55, 0.95);
         }
 
-        .events-list { max-height: 300px; overflow-y: auto; margin-top: 15px; }
+        .info-item label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #6b7280;
+            letter-spacing: 0.08em;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .info-item .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #bfdbfe;
+        }
+
+        .info-item .timestamp {
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        /* ===== SECTION INVENTREE (cards palettes) ===== */
+        .section-title {
+            margin: 35px 0 10px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #93c5fd;
+        }
+
+        .inv-card {
+            background: radial-gradient(circle at top left, #020617 0, #020617 50%, #020617 100%);
+            border-radius: 16px;
+            padding: 18px 16px 14px;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(55, 65, 81, 0.95);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .inv-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 18px 40px rgba(30, 64, 175, 0.9);
+            border-color: rgba(129, 140, 248, 0.9);
+        }
+
+        .inv-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #bfdbfe;
+        }
+
+        .inv-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .inv-item {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 10px;
+            padding: 7px 10px;
+            margin-top: 6px;
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #e5e7eb;
+        }
+
+        .inv-item span.qty {
+            font-weight: 600;
+            color: #93c5fd;
+        }
+
+        .inv-empty {
+            color: #6b7280;
+            font-style: italic;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 22px;
+            }
+            .stat-value {
+                font-size: 28px;
+            }
+        }
     </style>
 </head>
-<!-- ============================= -->
-<!--      SECTION INVENTREE        -->
-<!-- ============================= -->
-
-<div class="section-title" style="margin-top: 40px; font-size: 26px; font-weight: 600; color: #82a0ff;">
-    📦 Inventaire – Palettes Inventree (API Temps Réel)
-</div>
-
-<div id="inventree-palettes" class="dashboard-grid" style="margin-top: 20px;">
-    <!-- Les cards seront générées automatiquement par WebSocket -->
-</div>
-
-<style>
-    .inv-card {
-        background: rgba(30, 39, 66, 0.8);
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.35);
-        border: 1px solid rgba(120, 150, 255, 0.2);
-        transition: 0.25s ease;
-    }
-    .inv-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 35px rgba(120, 150, 255, 0.25);
-    }
-    .inv-title {
-        font-size: 20px;
-        font-weight: 600;
-        margin-bottom: 10px;
-        color: #80a2ff;
-    }
-    .inv-item {
-        background: rgba(15,22,41,0.55);
-        border-radius: 8px;
-        padding: 8px 12px;
-        margin-top: 6px;
-        font-size: 14px;
-        display: flex;
-        justify-content: space-between;
-        color: #c9d6ff;
-        border: 1px solid rgba(120, 150, 255, 0.15);
-    }
-    .inv-empty {
-        color: #7080aa;
-        font-style: italic;
-    }
-</style>
 
 <body>
-
 <div class="container">
 
+    <!-- ===== HEADER ===== -->
     <header>
         <h1>Surveillance IoT – Gestion de Stock</h1>
         <p>Raspberry Pi · Websocket temps réel · Inventree API</p>
     </header>
 
-    <!-- STATS GLOBALES -->
+    <!-- ===== STATS GLOBALES ===== -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-label">Colis Total</div>
@@ -174,118 +309,211 @@
             <div class="stat-label">Taux de Remplissage</div>
             <div class="stat-value" id="fill-rate">0%</div>
             <div class="progress-bar">
-                <div class="progress-fill" id="fill-progress" style="width:0%"></div>
+                <div class="progress-fill" id="fill-progress"></div>
             </div>
         </div>
     </div>
-
-    <!-- ZONES CAMÉRAS -->
+    <!-- ===== ZONES CAMÉRAS ===== -->
     <div class="dashboard-grid">
 
-        <!-- ZONE A1 -->
+        <!-- ===== ZONE A1 ===== -->
         <div class="card camera-card">
             <h3>Zone A1</h3>
-            <div class="camera-preview"><div class="placeholder">Caméra #1</div></div>
-            <span class="status-badge status-ok" id="zoneA1-status">OK</span>
+
+            <div class="camera-preview">
+                <div class="placeholder">Caméra #1</div>
+            </div>
+
+            <span id="zoneA1-status" class="status-badge status-ok">OK</span>
 
             <div class="info-grid">
                 <div class="info-item">
                     <label>Colis détectés</label>
                     <div class="value" id="zoneA1-packages">0</div>
+                    <div class="timestamp" id="zoneA1-time">--:--:--</div>
                 </div>
+
                 <div class="info-item">
                     <label>MAJ</label>
-                    <div class="timestamp" id="zoneA1-timestamp">--</div>
+                    <div class="value">Auto</div>
                 </div>
             </div>
         </div>
 
-        <!-- ZONE A2 -->
+        <!-- ===== ZONE A2 ===== -->
         <div class="card camera-card">
             <h3>Zone A2</h3>
-            <div class="camera-preview"><div class="placeholder">Caméra #2</div></div>
-            <span class="status-badge status-ok" id="zoneA2-status">OK</span>
+
+            <div class="camera-preview">
+                <div class="placeholder">Caméra #2</div>
+            </div>
+
+            <span id="zoneA2-status" class="status-badge status-ok">OK</span>
 
             <div class="info-grid">
                 <div class="info-item">
                     <label>Colis détectés</label>
                     <div class="value" id="zoneA2-packages">0</div>
+                    <div class="timestamp" id="zoneA2-time">--:--:--</div>
                 </div>
+
                 <div class="info-item">
                     <label>MAJ</label>
-                    <div class="timestamp" id="zoneA2-timestamp">--</div>
+                    <div class="value">Auto</div>
                 </div>
             </div>
         </div>
 
-        <!-- ZONE A3 -->
+        <!-- ===== ZONE A3 ===== -->
         <div class="card camera-card">
             <h3>Zone A3</h3>
-            <div class="camera-preview"><div class="placeholder">Caméra #3</div></div>
-            <span class="status-badge status-ok" id="zoneA3-status">OK</span>
+
+            <div class="camera-preview">
+                <div class="placeholder">Caméra #3</div>
+            </div>
+
+            <span id="zoneA3-status" class="status-badge status-ok">OK</span>
 
             <div class="info-grid">
                 <div class="info-item">
                     <label>Colis détectés</label>
                     <div class="value" id="zoneA3-packages">0</div>
+                    <div class="timestamp" id="zoneA3-time">--:--:--</div>
                 </div>
+
                 <div class="info-item">
                     <label>MAJ</label>
-                    <div class="timestamp" id="zoneA3-timestamp">--</div>
+                    <div class="value">Auto</div>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- HISTORIQUE -->
-    <div class="card" style="margin-top:30px;">
-        <h3>Historique des événements</h3>
-        <div class="events-list" id="events-list"></div>
+
+    <!-- ========== SECTION INVENTREE ========== -->
+    <h2 class="section-title">Inventaire — Emplacements et Contenu</h2>
+
+    <div class="dashboard-grid" id="inventree-container">
+        <!-- Dynamically filled by WebSocket + API Inventree -->
     </div>
+    <!-- ===== SCRIPT WEBSOCKET ===== -->
+    <script>
+        console.log("Connexion WebSocket…");
 
-</div>
+        // 📡 Connexion directe au Raspberry Pi
+        const ws = new WebSocket("ws://192.168.100.112:8765");
 
-<!-- SCRIPT WEBSOCKET -->
-<script>
-console.log("Connexion au WebSocket…");
+        ws.onopen = () => {
+            console.log("WebSocket connecté !");
+        };
 
-const ws = new WebSocket("ws://192.168.100.112:8765");
+        ws.onerror = (err) => {
+            console.error("Erreur WebSocket", err);
+        };
 
-ws.onopen = () => {
-    console.log("WebSocket connecté !");
-};
+        ws.onclose = () => {
+            console.warn("WebSocket fermé");
+        };
 
-ws.onerror = err => {
-    console.error("Erreur WebSocket :", err);
-};
+        // =====================================================================
+        //                  🔥 RECEPTION DES DONNÉES WEBSOCKET
+        // =====================================================================
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
 
-ws.onmessage = event => {
-    const data = JSON.parse(event.data);
+            // =============================
+            // 🟦 GLOBAL STATS
+            // =============================
+            document.getElementById("total-packages").innerText = data.global.total;
+            document.getElementById("fill-rate").innerText = data.global.fill_rate + "%";
+            document.getElementById("fill-progress").style.width = data.global.fill_rate + "%";
 
-    // 📦 Stats globales
-    document.getElementById("total-packages").innerText = data.global.total;
-    document.getElementById("fill-rate").innerText = data.global.fill_rate + "%";
-    document.getElementById("fill-progress").style.width = data.global.fill_rate + "%";
+            // =============================
+            // 🟧 ZONE A1
+            // =============================
+            document.getElementById("zoneA1-packages").innerText = data.zoneA1.packages;
+            document.getElementById("zoneA1-status").innerText = data.zoneA1.status;
+            document.getElementById("zoneA1-time").innerText = new Date().toLocaleTimeString();
 
-    // 🏷 Zones
-    ["zoneA1","zoneA2","zoneA3"].forEach(zone=>{
-        document.getElementById(zone+"-packages").innerText = data[zone].packages;
-        document.getElementById(zone+"-status").innerText   = data[zone].status;
-        document.getElementById(zone+"-timestamp").innerText = new Date().toLocaleTimeString();
-    });
+            // Coloration statut
+            updateStatusBadge("zoneA1-status", data.zoneA1.status);
 
-    // 📝 Historique
-    const e = document.getElementById("events-list");
-    const item = document.createElement("div");
-    item.innerHTML =
-        "<div style='padding:10px;border-left:3px solid #60a5fa;margin-bottom:5px;'>"
-        + "<b>Mise à jour reçue</b> - "
-        + new Date().toLocaleTimeString()
-        + "</div>";
-    e.prepend(item);
-};
-</script>
+            // =============================
+            // 🟥 ZONE A2
+            // =============================
+            document.getElementById("zoneA2-packages").innerText = data.zoneA2.packages;
+            document.getElementById("zoneA2-status").innerText = data.zoneA2.status;
+            document.getElementById("zoneA2-time").innerText = new Date().toLocaleTimeString();
 
+            updateStatusBadge("zoneA2-status", data.zoneA2.status);
+
+            // =============================
+            // 🟩 ZONE A3
+            // =============================
+            document.getElementById("zoneA3-packages").innerText = data.zoneA3.packages;
+            document.getElementById("zoneA3-status").innerText = data.zoneA3.status;
+            document.getElementById("zoneA3-time").innerText = new Date().toLocaleTimeString();
+
+            updateStatusBadge("zoneA3-status", data.zoneA3.status);
+
+            // =============================
+            // 📦 INVENTREE : Génération des cards palettes
+            // =============================
+            if (data.inventree && data.inventree.palettes) {
+                generateInventreeCards(data.inventree.palettes);
+            }
+        };
+
+
+        // =====================================================================
+        //                  🔧 Fonctions Utilitaires
+        // =====================================================================
+
+        // ➤ Met à jour automatiquement la couleur du badge de statut
+        function updateStatusBadge(elementId, status) {
+            const el = document.getElementById(elementId);
+            el.classList.remove("status-ok", "status-anomalie", "status-vide");
+
+            if (status.toLowerCase() === "ok") {
+                el.classList.add("status-ok");
+            } else if (status.toLowerCase() === "anomalie") {
+                el.classList.add("status-anomalie");
+            } else {
+                el.classList.add("status-vide");
+            }
+        }
+
+        // ➤ Génère automatiquement les cards Inventree dans la section dédiée
+        function generateInventreeCards(palettes) {
+            const container = document.getElementById("inventree-container");
+            container.innerHTML = ""; // reset
+
+            palettes.forEach(palette => {
+                let html = `
+                    <div class="inv-card">
+                        <div class="inv-title">${palette.name}</div>
+                `;
+
+                // Contenu de la palette
+                if (!palette.items || palette.items.length === 0) {
+                    html += `<div class="inv-empty">Aucun article</div>`;
+                } else {
+                    palette.items.forEach(item => {
+                        html += `
+                            <div class="inv-item">
+                                <span>${item.name}</span>
+                                <span class="qty">${item.qty}</span>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `</div>`; // fermeture card
+                container.innerHTML += html;
+            });
+        }
+    </script>
+
+</div> <!-- Fin container -->
 </body>
 </html>
