@@ -8,7 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Poppins', sans-serif;
@@ -18,16 +22,19 @@
             padding: 20px;
         }
 
-        .container { max-width: 1400px; margin: 0 auto; }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
         /* Header */
         header {
             background: linear-gradient(135deg, #1e2742 0%, #2a3251 100%);
             padding: 20px 24px;
             border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             margin-bottom: 20px;
-            border: 1px solid rgba(96,165,250,0.2);
+            border: 1px solid rgba(96, 165, 250, 0.2);
         }
 
         header h1 {
@@ -54,8 +61,8 @@
             border-radius: 999px;
             padding: 8px 18px;
             font-size: 13px;
-            border: 1px solid rgba(148,163,184,0.4);
-            background: rgba(15,23,42,0.8);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            background: rgba(15, 23, 42, 0.8);
             color: #cbd5f5;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -65,16 +72,26 @@
             background: #2563eb;
             color: #e5e7eb;
             border-color: #60a5fa;
-            box-shadow: 0 0 18px rgba(37,99,235,0.6);
+            box-shadow: 0 0 18px rgba(37, 99, 235, 0.6);
         }
 
-        .tab-btn:hover { transform: translateY(-1px); }
+        .tab-btn:hover {
+            transform: translateY(-1px);
+        }
 
-        .tab-content { margin-top: 20px; }
-        .tab-panel { display: none; }
-        .tab-panel.active { display: block; }
+        .tab-content {
+            margin-top: 20px;
+        }
 
-        /* Layout grid & cards */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Cards etc. */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -86,14 +103,14 @@
             background: linear-gradient(135deg, #1e2742 0%, #252d47 100%);
             border-radius: 15px;
             padding: 18px 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.35);
-            border: 1px solid rgba(96,165,250,0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(96, 165, 250, 0.15);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(96,165,250,0.25);
+            box-shadow: 0 12px 40px rgba(96, 165, 250, 0.25);
         }
 
         .card h3 {
@@ -119,8 +136,8 @@
             border-radius: 15px;
             padding: 20px;
             text-align: center;
-            border: 1px solid rgba(96,165,250,0.15);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(96, 165, 250, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .stat-label {
@@ -139,8 +156,9 @@
         }
 
         .progress-bar {
-            width: 100%; height: 8px;
-            background: rgba(15,22,41,0.8);
+            width: 100%;
+            height: 8px;
+            background: rgba(15, 22, 41, 0.8);
             border-radius: 10px;
             margin-top: 10px;
             overflow: hidden;
@@ -165,7 +183,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border: 2px solid rgba(96,165,250,0.25);
+            border: 2px solid rgba(96, 165, 250, 0.25);
         }
 
         .camera-preview img {
@@ -180,7 +198,7 @@
             text-align: center;
         }
 
-        /* Palettes & status */
+        /* Palettes / status */
         .palette-status {
             display: inline-flex;
             align-items: center;
@@ -192,35 +210,35 @@
         }
 
         .status-ok {
-            background: rgba(22,163,74,0.2);
+            background: rgba(22, 163, 74, 0.2);
             color: #4ade80;
-            border: 1px solid rgba(22,163,74,0.9);
+            border: 1px solid rgba(22, 163, 74, 0.9);
         }
 
         .status-error {
-            background: rgba(239,68,68,0.2);
+            background: rgba(239, 68, 68, 0.2);
             color: #fecaca;
-            border: 1px solid rgba(239,68,68,0.9);
+            border: 1px solid rgba(239, 68, 68, 0.9);
         }
 
         .status-unknown {
-            background: rgba(148,163,184,0.2);
+            background: rgba(148, 163, 184, 0.2);
             color: #e5e7eb;
-            border: 1px solid rgba(148,163,184,0.9);
+            border: 1px solid rgba(148, 163, 184, 0.9);
         }
 
         .info-grid {
             margin-top: 8px;
             display: grid;
-            grid-template-columns: repeat(2, minmax(0,1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
         }
 
         .info-item {
-            background: rgba(15,23,42,0.6);
+            background: rgba(15, 23, 42, 0.6);
             padding: 8px 10px;
             border-radius: 8px;
-            border: 1px solid rgba(51,65,85,0.9);
+            border: 1px solid rgba(51, 65, 85, 0.9);
         }
 
         .info-item label {
@@ -247,78 +265,32 @@
             display: flex;
             justify-content: space-between;
             padding: 4px 0;
-            border-bottom: 1px dashed rgba(51,65,85,0.5);
+            border-bottom: 1px dashed rgba(51, 65, 85, 0.5);
         }
 
-        .items-list div:last-child { border-bottom: none; }
+        .items-list div:last-child {
+            border-bottom: none;
+        }
 
-        .items-list span.name { color: #e5e7eb; }
-        .items-list span.qty { color: #93c5fd; font-weight: 600; }
-        .items-list span.expect { font-size: 11px; color: #9ca3af; margin-left: 6px; }
+        .items-list span.name {
+            color: #e5e7eb;
+        }
+
+        .items-list span.qty {
+            color: #93c5fd;
+            font-weight: 600;
+        }
+
+        .items-list span.expect {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-left: 6px;
+        }
 
         .error-details {
             margin-top: 8px;
             font-size: 11px;
             color: #fecaca;
-        }
-
-        /* Scan panel */
-        .scan-input {
-            width: 100%;
-            padding: 8px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(148,163,184,0.6);
-            background: rgba(15,23,42,0.9);
-            color: #e5e7eb;
-            font-size: 13px;
-            outline: none;
-        }
-
-        .scan-input:focus {
-            border-color: #60a5fa;
-            box-shadow: 0 0 12px rgba(37,99,235,0.6);
-        }
-
-        .scan-select {
-            width: 100%;
-            margin-top: 8px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            border: 1px solid rgba(148,163,184,0.6);
-            background: rgba(15,23,42,0.9);
-            color: #e5e7eb;
-            font-size: 13px;
-        }
-
-        .scan-status {
-            margin-top: 10px;
-            padding: 8px 10px;
-            border-radius: 10px;
-            font-size: 13px;
-        }
-
-        .scan-status-neutral {
-            background: rgba(30,64,175,0.2);
-            border: 1px solid rgba(59,130,246,0.7);
-            color: #bfdbfe;
-        }
-
-        .scan-status-ok {
-            background: rgba(22,163,74,0.2);
-            border: 1px solid rgba(34,197,94,0.9);
-            color: #bbf7d0;
-        }
-
-        .scan-status-bad {
-            background: rgba(239,68,68,0.2);
-            border: 1px solid rgba(239,68,68,0.9);
-            color: #fecaca;
-        }
-
-        .scan-meta {
-            margin-top: 6px;
-            font-size: 11px;
-            color: #9ca3af;
         }
 
         /* Config tab */
@@ -332,8 +304,8 @@
             background: linear-gradient(135deg, #020617 0%, #111827 100%);
             border-radius: 14px;
             padding: 14px 16px;
-            border: 1px solid rgba(75,85,99,0.7);
-            box-shadow: 0 10px 30px rgba(15,23,42,0.9);
+            border: 1px solid rgba(75, 85, 99, 0.7);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
         }
 
         .config-card h4 {
@@ -352,8 +324,8 @@
             flex: 2;
             padding: 5px 8px;
             border-radius: 6px;
-            border: 1px solid rgba(148,163,184,0.7);
-            background: rgba(15,23,42,0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            background: rgba(15, 23, 42, 0.9);
             color: #e5e7eb;
             font-size: 13px;
         }
@@ -362,8 +334,8 @@
             width: 70px;
             padding: 5px 6px;
             border-radius: 6px;
-            border: 1px solid rgba(148,163,184,0.7);
-            background: rgba(15,23,42,0.9);
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            background: rgba(15, 23, 42, 0.9);
             color: #e5e7eb;
             font-size: 13px;
         }
@@ -372,13 +344,16 @@
             padding: 4px 10px;
             border-radius: 999px;
             font-size: 11px;
-            border: 1px solid rgba(148,163,184,0.8);
-            background: rgba(15,23,42,0.9);
+            border: 1px solid rgba(148, 163, 184, 0.8);
+            background: rgba(15, 23, 42, 0.9);
             color: #e5e7eb;
             cursor: pointer;
         }
 
-        .config-btn.small { padding: 3px 8px; font-size: 11px; }
+        .config-btn.small {
+            padding: 3px 8px;
+            font-size: 11px;
+        }
 
         .config-actions {
             margin-top: 8px;
@@ -392,18 +367,24 @@
             padding: 6px 14px;
             border-radius: 999px;
             border: 1px solid #22c55e;
-            background: rgba(22,163,74,0.15);
+            background: rgba(22, 163, 74, 0.15);
             color: #bbf7d0;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .config-save-all:hover { background: rgba(22,163,74,0.25); }
+        .config-save-all:hover {
+            background: rgba(22, 163, 74, 0.25);
+        }
 
         @media (max-width: 768px) {
-            header h1 { font-size: 22px; }
-            .stat-value { font-size: 24px; }
+            header h1 {
+                font-size: 22px;
+            }
+            .stat-value {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -457,28 +438,7 @@
                     </div>
                 </div>
 
-                <!-- Dernier scan -->
-                <div class="card">
-                    <h3>Dernier scan (Inventree)</h3>
-                    <input
-                        id="scan-input"
-                        class="scan-input"
-                        type="text"
-                        placeholder="Place ton curseur ici et scanne un QR / code-barres..."
-                        autocomplete="off"
-                    >
-                    <select id="scan-palette-select" class="scan-select">
-                        <option value="">Palette cible (sélectionne une palette)</option>
-                    </select>
-
-                    <div id="scan-status" class="scan-status scan-status-neutral">
-                        En attente de scan…
-                    </div>
-
-                    <div id="scan-meta" class="scan-meta">
-                        Aucun scan reçu pour le moment.
-                    </div>
-                </div>
+                <!-- Placeholder pour étendre plus tard si besoin -->
             </div>
 
             <!-- Palettes -->
@@ -492,8 +452,7 @@
         <section id="tab-config" class="tab-panel">
             <p class="config-help">
                 Ici tu définis <strong>la répartition attendue</strong> des cartons par palette.<br>
-                Le système vérifiera ensuite en temps réel et affichera ✔/❌ dans l’onglet <em>Surveillance</em>,
-                et aussi pour chaque <strong>scan</strong>.
+                Le système vérifiera ensuite en temps réel et affichera ✔/❌ dans l’onglet <em>Surveillance</em>.
             </p>
 
             <div class="dashboard-grid" id="config-container">
@@ -522,8 +481,11 @@
             btn.classList.add('active');
 
             tabPanels.forEach(p => {
-                if (p.id === 'tab-' + target) p.classList.add('active');
-                else p.classList.remove('active');
+                if (p.id === 'tab-' + target) {
+                    p.classList.add('active');
+                } else {
+                    p.classList.remove('active');
+                }
             });
         });
     });
@@ -545,6 +507,7 @@
         camPlaceholder.innerHTML = "Flux vidéo indisponible<br>192.168.100.139";
     };
 
+    // Refresh anti-freeze
     setInterval(() => {
         camImg.src = "http://192.168.100.139:81/stream?ts=" + Date.now();
     }, 20000);
@@ -557,20 +520,22 @@
     let lastPalettes = [];
     let palettesConfig = {}; // { "PALETTE 1": { "CARTON A": 2, ... }, ... }
 
-    let lastScan = null;           // objet renvoyé par le serveur
-    let selectedPaletteName = "";  // palette cible pour le scan
-
-    // Charger configuration depuis localStorage
+    // Charger config depuis localStorage
     function loadConfig() {
         try {
             const raw = localStorage.getItem('palettesConfig');
-            palettesConfig = raw ? JSON.parse(raw) : {};
+            if (raw) {
+                palettesConfig = JSON.parse(raw);
+            } else {
+                palettesConfig = {};
+            }
         } catch (e) {
             console.error("Erreur parse palettesConfig:", e);
             palettesConfig = {};
         }
     }
 
+    // Sauver config dans localStorage
     function saveConfig() {
         localStorage.setItem('palettesConfig', JSON.stringify(palettesConfig));
         alert("Configuration palettes sauvegardée (localStorage navigateur).");
@@ -593,15 +558,13 @@
     ws.onmessage = (event) => {
         const msg = JSON.parse(event.data);
 
-        if (msg.inventree && msg.inventree.palettes) {
-            lastPalettes = msg.inventree.palettes;
-            updateDashboard();
+        if (!msg.inventree || !msg.inventree.palettes) {
+            console.warn("Format inattendu:", msg);
+            return;
         }
 
-        if (msg.scan) {
-            lastScan = msg.scan;
-            updateScanPanel();
-        }
+        lastPalettes = msg.inventree.palettes;
+        updateDashboard();
     };
 
     // =============================
@@ -609,9 +572,10 @@
     // =============================
     function computeComplianceForPalette(palette) {
         const name = palette.name || "Palette inconnue";
-        const expected = palettesConfig[name] || {};
-        const actual = {};
+        const expected = palettesConfig[name] || {}; // { "CARTON A": 2, ... }
 
+        // Réel : dict name -> qty
+        const actual = {};
         (palette.items || []).forEach(it => {
             const n = it.name || "Sans nom";
             const q = Number(it.qty || it.quantity || 0);
@@ -621,6 +585,7 @@
         const errors = [];
         let ok = true;
 
+        // Manques ou quantités insuffisantes
         Object.keys(expected).forEach(cartonName => {
             const expQty = Number(expected[cartonName]);
             const actQty = Number(actual[cartonName] || 0);
@@ -634,6 +599,7 @@
             }
         });
 
+        // Cartons en plus non prévus
         Object.keys(actual).forEach(cartonName => {
             if (!(cartonName in expected)) {
                 ok = false;
@@ -642,43 +608,51 @@
         });
 
         let status = "unknown";
-        if (Object.keys(expected).length === 0) status = "unknown";
-        else if (ok) status = "ok";
-        else status = "error";
+        if (Object.keys(expected).length === 0) {
+            status = "unknown"; // pas de config
+        } else if (ok) {
+            status = "ok";
+        } else {
+            status = "error";
+        }
 
         return { status, errors, expected, actual };
     }
 
     // =============================
-    // Mise à jour dashboard
+    // Mise à jour dashboard (Surveillance + Config)
     // =============================
     function updateDashboard() {
+        // Stats globales
         let totalColis = 0;
-        lastPalettes.forEach(p => totalColis += Number(p.total_qty || 0));
+        lastPalettes.forEach(p => {
+            totalColis += Number(p.total_qty || 0);
+        });
 
         document.getElementById('stat-total').innerText = totalColis;
         document.getElementById('stat-palettes').innerText = lastPalettes.length;
 
+        // Fill rate fictif (ex: saturé à 100 colis)
         const fillRate = Math.min(100, Math.round((totalColis / 100) * 100));
         document.getElementById('stat-fill').innerText = fillRate + "%";
         document.getElementById('fill-progress').style.width = fillRate + "%";
 
         renderPalettesSurveillance();
         renderConfigTab();
-        updatePaletteSelectOptions();
     }
 
     // =============================
-    // Rendu pallettes (Surveillance)
+    // Rendu onglet Surveillance
     // =============================
     function renderPalettesSurveillance() {
         const container = document.getElementById('palettes-container');
         container.innerHTML = "";
 
         lastPalettes.forEach(palette => {
-            const { status, errors, expected } = computeComplianceForPalette(palette);
+            const { status, errors, expected, actual } = computeComplianceForPalette(palette);
             const pName = palette.name || "Palette inconnue";
 
+            // Badge
             let statusClass = "status-unknown";
             let statusText = "Configuration manquante";
 
@@ -690,6 +664,7 @@
                 statusText = "Palette non conforme";
             }
 
+            // Items list
             let itemsHtml = "";
             (palette.items || []).forEach(item => {
                 const n = item.name || "Sans nom";
@@ -717,7 +692,7 @@
             card.innerHTML = `
                 <h3>${pName}</h3>
                 <div class="palette-status ${statusClass}">
-                    ${status === "ok" ? "✔" : (status === "error" ? "✖" : "?")} ${statusText}
+                    ${status === "ok" ? "✔" : (status === "error" ? "✖" : "?" )} ${statusText}
                 </div>
                 <div class="info-grid">
                     <div class="info-item">
@@ -740,7 +715,7 @@
     }
 
     // =============================
-    // Rendu configuration palettes
+    // Rendu onglet Configuration
     // =============================
     function renderConfigTab() {
         const container = document.getElementById('config-container');
@@ -748,16 +723,21 @@
 
         lastPalettes.forEach(palette => {
             const pName = palette.name || "Palette inconnue";
-            if (!palettesConfig[pName]) palettesConfig[pName] = {};
+
+            if (!palettesConfig[pName]) {
+                palettesConfig[pName] = {};
+            }
 
             const card = document.createElement('div');
             card.className = "config-card";
 
             let linesHtml = "";
+
             const currentConfig = palettesConfig[pName];
             const cartonNames = Object.keys(currentConfig);
 
             if (cartonNames.length === 0) {
+                // Exemple vide
                 linesHtml += createConfigLineHtml(pName, "", "");
             } else {
                 cartonNames.forEach(cartonName => {
@@ -789,6 +769,7 @@
     function createConfigLineHtml(paletteName, cartonName, qty) {
         const safeName = cartonName || "";
         const safeQty = qty !== undefined && qty !== null && qty !== "" ? qty : "";
+
         return `
             <div class="config-line" data-palette="${paletteName}">
                 <input type="text" class="cfg-name" placeholder="Nom du carton (ex: CARTON A)" value="${safeName}">
@@ -798,6 +779,9 @@
         `;
     }
 
+    // =============================
+    // Events sur Config tab
+    // =============================
     function attachConfigEvents() {
         const configContainer = document.getElementById('config-container');
 
@@ -820,6 +804,7 @@
                 const linesDiv = btn.closest('.config-card').querySelector('.config-lines');
                 linesDiv.innerHTML = "";
 
+                // On prend l'état actuel comme référence
                 const actual = {};
                 (palette.items || []).forEach(it => {
                     const n = it.name || "Sans nom";
@@ -842,14 +827,16 @@
         });
     }
 
+    // Sauvegarde globale config
     document.getElementById('btn-save-config').addEventListener('click', () => {
         const configContainer = document.getElementById('config-container');
+
+        // On reconstruit palettesConfig à partir des inputs
         palettesConfig = {};
 
         const allCards = configContainer.querySelectorAll('.config-card');
         allCards.forEach(card => {
-            const linesDiv = card.querySelector('.config-lines');
-            const paletteName = linesDiv.getAttribute('data-palette');
+            const paletteName = card.querySelector('.config-lines').getAttribute('data-palette');
             const lines = card.querySelectorAll('.config-line');
 
             palettesConfig[paletteName] = {};
@@ -857,6 +844,7 @@
             lines.forEach(line => {
                 const nameInput = line.querySelector('.cfg-name');
                 const qtyInput = line.querySelector('.cfg-qty');
+
                 const cartonName = (nameInput.value || "").trim();
                 const qty = Number(qtyInput.value || 0);
 
@@ -867,111 +855,10 @@
         });
 
         saveConfig();
+        // Met à jour l’onglet surveillance avec la nouvelle config
         renderPalettesSurveillance();
     });
 
-    // =============================
-    // Palette select pour scan
-    // =============================
-    function updatePaletteSelectOptions() {
-        const select = document.getElementById('scan-palette-select');
-        const previous = select.value;
-
-        select.innerHTML = '<option value="">Palette cible (sélectionne une palette)</option>';
-
-        lastPalettes.forEach(p => {
-            const name = p.name || "Palette inconnue";
-            const opt = document.createElement('option');
-            opt.value = name;
-            opt.textContent = name;
-            select.appendChild(opt);
-        });
-
-        if (previous && [...select.options].some(o => o.value === previous)) {
-            select.value = previous;
-            selectedPaletteName = previous;
-        }
-    }
-
-    document.getElementById('scan-palette-select').addEventListener('change', (e) => {
-        selectedPaletteName = e.target.value;
-        updateScanPanel(); // pour recalculer conforme / pas conforme si on a déjà un scan
-    });
-
-    // =============================
-    // Gestion du scan (input texte)
-    // =============================
-    const scanInput = document.getElementById('scan-input');
-    const scanStatusDiv = document.getElementById('scan-status');
-    const scanMetaDiv = document.getElementById('scan-meta');
-
-    // On essaie de focus l'input dès le chargement
-    window.addEventListener('load', () => {
-        scanInput.focus();
-    });
-
-    scanInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const barcode = scanInput.value.trim();
-            if (!barcode) return;
-
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({ type: "scan", barcode: barcode }));
-                scanStatusDiv.className = "scan-status scan-status-neutral";
-                scanStatusDiv.textContent = "Scan envoyé… en attente de réponse Inventree.";
-            } else {
-                scanStatusDiv.className = "scan-status scan-status-bad";
-                scanStatusDiv.textContent = "WebSocket non connecté.";
-            }
-
-            // On vide l'input pour le prochain scan
-            scanInput.value = "";
-        }
-    });
-
-    function updateScanPanel() {
-        if (!lastScan) {
-            scanStatusDiv.className = "scan-status scan-status-neutral";
-            scanStatusDiv.textContent = "En attente de scan…";
-            scanMetaDiv.textContent = "Aucun scan reçu pour le moment.";
-            return;
-        }
-
-        const ok = lastScan.ok;
-        const name = lastScan.name || "(nom inconnu)";
-        const location = lastScan.location || "(emplacement inconnu)";
-        const barcode = lastScan.barcode || "(code inconnu)";
-        const description = lastScan.description || "";
-
-        if (!selectedPaletteName) {
-            scanStatusDiv.className = "scan-status scan-status-neutral";
-            scanStatusDiv.textContent = "Scan reçu, mais aucune palette cible sélectionnée.";
-        } else {
-            const expectedMap = palettesConfig[selectedPaletteName] || {};
-            const isExpected = !!expectedMap[name];
-
-            if (!ok) {
-                scanStatusDiv.className = "scan-status scan-status-bad";
-                scanStatusDiv.textContent = "Erreur Inventree : " + (lastScan.error || "inconnue");
-            } else if (Object.keys(expectedMap).length === 0) {
-                scanStatusDiv.className = "scan-status scan-status-neutral";
-                scanStatusDiv.textContent = `Scan : ${name} — aucune configuration définie pour ${selectedPaletteName}.`;
-            } else if (isExpected) {
-                scanStatusDiv.className = "scan-status scan-status-ok";
-                scanStatusDiv.textContent = `✔ ${name} est attendu sur ${selectedPaletteName}.`;
-            } else {
-                scanStatusDiv.className = "scan-status scan-status-bad";
-                scanStatusDiv.textContent = `✖ ${name} ne fait pas partie des cartons attendus sur ${selectedPaletteName}.`;
-            }
-        }
-
-        let meta = `Code scanné : ${barcode}`;
-        meta += ` | Article : ${name}`;
-        if (description) meta += ` | ${description}`;
-        meta += ` | Emplacement Inventree : ${location}`;
-        scanMetaDiv.textContent = meta;
-    }
 </script>
 </body>
 </html>
