@@ -7,375 +7,373 @@
     <!-- Police -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1d35 100%);
-            color: #e0e6ed;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container { max-width: 1400px; margin: 0 auto; }
+<style>
+/* ===== RESET ===== */
+* { margin:0; padding:0; box-sizing:border-box; }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #1e2742 0%, #2a3251 100%);
-            padding: 20px 24px;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            margin-bottom: 20px;
-            border: 1px solid rgba(96, 165, 250, 0.2);
-        }
-        header h1 { font-size: 26px; font-weight: 700; color: #60a5fa; margin-bottom: 4px; }
-        header p { color: #94a3b8; font-size: 13px; font-weight: 300; }
+body {
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#0a0e27,#1a1d35);
+    color:#e0e6ed;
+    min-height:100vh;
+    padding:20px;
+}
 
-        /* Tabs */
-        .tabs{ margin-top:16px; display:flex; gap:10px; }
-        .tab-btn{
-            border-radius:999px; padding:8px 18px; font-size:13px;
-            border:1px solid rgba(148,163,184,0.4);
-            background:rgba(15,23,42,0.8); color:#cbd5f5;
-            cursor:pointer; transition:.2s;
-        }
-        .tab-btn.active{
-            background:#2563eb; color:white;
-            border-color:#60a5fa; box-shadow:0 0 18px rgba(37,99,235,.6);
-        }
-        .tab-content{ margin-top:20px; }
-        .tab-panel{ display:none; }
-        .tab-panel.active{ display:block; }
+.container { max-width:1400px; margin:0 auto; }
 
-        .dashboard-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-            gap:20px; margin-bottom:25px;
-        }
+/* ===== HEADER ===== */
+header {
+    background:linear-gradient(135deg,#1e2742,#2a3251);
+    padding:20px 24px;
+    border-radius:15px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    margin-bottom:20px;
+    border:1px solid rgba(96,165,250,0.2);
+}
+header h1 { font-size:26px; font-weight:700; color:#60a5fa; margin-bottom:4px; }
+header p { font-size:13px; color:#94a3b8; }
 
-        /* Cards */
-        .card{
-            background:linear-gradient(135deg,#1e2742,#252d47);
-            border-radius:15px;
-            padding:18px 20px;
-            border:1px solid rgba(96,165,250,.15);
-            box-shadow:0 8px 32px rgba(0,0,0,.35);
-        }
-        .card h3{
-            font-size:17px; font-weight:600;
-            margin-bottom:10px; color:#60a5fa;
-        }
+/* ===== TABS ===== */
+.tabs { margin-top:16px; display:flex; gap:10px; }
+.tab-btn {
+    padding:8px 18px; font-size:13px;
+    border-radius:999px;
+    border:1px solid rgba(148,163,184,0.4);
+    background:rgba(15,23,42,0.8);
+    color:#cbd5f5; cursor:pointer;
+    transition:.2s;
+}
+.tab-btn.active {
+    background:#2563eb; color:white;
+    border-color:#60a5fa;
+    box-shadow:0 0 18px rgba(37,99,235,0.6);
+}
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
 
-        /* Camera */
-        .camera-preview{
-            width:100%; height:260px;
-            background:#0f172a; border-radius:12px;
-            display:flex; align-items:center; justify-content:center;
-            overflow:hidden;
-            border:2px solid rgba(96,165,250,.25);
-            margin-bottom:10px;
-        }
-        .camera-preview img{
-            width:100%; height:100%; object-fit:contain;
-        }
-        .placeholder{ color:#64748b; font-size:14px; text-align:center; }
+/* ===== GRID ===== */
+.dashboard-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:20px;
+    margin-bottom:25px;
+}
 
-        .cam-metrics{
-            margin-top:10px; padding:10px;
-            border-radius:10px;
-            background:rgba(15,23,42,.9);
-            border:1px solid rgba(96,165,250,.25);
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-            gap:10px; font-size:12px;
-        }
-        .cam-metric-label{
-            font-size:10px; letter-spacing:.08em;
-            color:#64748b; text-transform:uppercase;
-        }
-        .cam-metric-value{ font-weight:600; }
+/* ===== CARDS ===== */
+.card {
+    background:linear-gradient(135deg,#1e2742,#252d47);
+    padding:18px 20px;
+    border-radius:15px;
+    border:1px solid rgba(96,165,250,0.15);
+    box-shadow:0 8px 32px rgba(0,0,0,0.35);
+}
+.card h3 {
+    font-size:17px; font-weight:600;
+    color:#60a5fa; margin-bottom:8px;
+}
 
-        /* Stats globales */
-        .stats-grid{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-            gap:18px; margin-bottom:20px;
-        }
-        .stat-card{
-            background:linear-gradient(135deg,#1e2742,#252d47);
-            border-radius:15px; padding:20px; text-align:center;
-        }
-        .stat-label{ font-size:11px; color:#64748b; text-transform:uppercase; }
-        .stat-value{ font-size:30px; font-weight:700; color:#60a5fa; margin-top:6px; }
+/* ===== CAMERA ===== */
+.camera-preview {
+    width:100%; height:260px;
+    background:#0f172a;
+    border-radius:12px;
+    border:2px solid rgba(96,165,250,.25);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    margin-bottom:10px;
+}
+.camera-preview img {
+    width:100%; height:100%;
+    object-fit:contain;
+}
+.placeholder {
+    color:#64748b;
+    font-size:14px;
+    text-align:center;
+}
 
-        .progress-bar{ width:100%; height:8px; background:#101626; border-radius:10px; overflow:hidden; margin-top:10px; }
-        .progress-fill{ height:100%; background:linear-gradient(90deg,#22c55e,#10b981); width:0%; transition:.4s; }
+/* ===== CAM METRICS ===== */
+.cam-metrics {
+    margin-top:10px; padding:10px;
+    border-radius:10px;
+    background:rgba(15,23,42,.9);
+    border:1px solid rgba(96,165,250,.25);
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:10px;
+}
+.cam-metric-label {
+    font-size:10px;
+    color:#64748b;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
+.cam-metric-value { font-weight:600; }
 
-        /* IA block (nouveau) */
-        .ia-grid{
-            margin-top:12px;
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-            gap:12px;
-            padding-top:10px;
-            border-top:1px solid rgba(255,255,255,0.08);
-        }
-        .ia-item{
-            background:rgba(15,23,42,0.6);
-            padding:10px; border-radius:10px;
-            border:1px solid rgba(51,65,85,.5);
-            text-align:center;
-        }
-        .ia-label{
-            font-size:11px; color:#64748b;
-            text-transform:uppercase; margin-bottom:4px;
-        }
-        .ia-value{ font-size:20px; font-weight:600; color:#e5e7eb; }
+/* ===== LIVE IA STATS ===== */
+.live-stats-grid {
+    margin-top:12px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:14px;
+}
+.live-stat-card {
+    background:rgba(15,23,42,0.6);
+    padding:14px;
+    border-radius:12px;
+    border:1px solid rgba(51,65,85,0.8);
+    text-align:center;
+    box-shadow:0 6px 20px rgba(0,0,0,0.25);
+}
+.live-stat-label { font-size:12px; color:#94a3b8; }
+.live-stat-value { font-size:28px; font-weight:700; color:#e5e7eb; }
 
-            </style>
+/* Legend */
+.live-legend { margin-top:18px; font-size:14px; }
+.legend-line { display:flex; align-items:center; gap:6px; margin-top:6px; }
+.legend-box {
+    width:16px; height:16px; border-radius:4px;
+}
+.legend-box.green { background:#22c55e; }
+.legend-box.red   { background:#ef4444; }
+
+/* ===== PALLETES ===== */
+.items-list div {
+    display:flex; justify-content:space-between;
+    padding:4px 0;
+    border-bottom:1px dashed rgba(51,65,85,0.5);
+}
+.items-list span.name { font-weight:600; }
+.items-list span.desc { font-size:11px; color:#9ca3af; }
+.items-list span.qty  { color:#93c5fd; font-weight:600; }
+.items-list span.expect { font-size:11px; color:#9ca3af; margin-left:6px; }
+
+/* Status badge */
+.palette-status {
+    display:inline-flex; align-items:center;
+    gap:6px; padding:4px 10px;
+    font-size:12px; border-radius:999px;
+    margin-bottom:8px;
+}
+.status-ok      { background:rgba(22,163,74,.2);  color:#4ade80; border:1px solid #16a34a; }
+.status-error   { background:rgba(239,68,68,.2); color:#fecaca; border:1px solid #ef4444; }
+.status-unknown { background:rgba(148,163,184,.2); color:#e5e7eb; border:1px solid #94a3b8; }
+
+.error-details { margin-top:8px; font-size:11px; color:#fecaca; }
+
+/* CONFIG */
+.config-card {
+    background:linear-gradient(135deg,#020617,#111827);
+    padding:14px 16px;
+    border-radius:14px;
+    border:1px solid rgba(75,85,99,0.7);
+}
+.config-line { display:flex; gap:6px; margin-top:6px; }
+.config-line input {
+    background:#0f172a; color:white;
+    border-radius:6px; border:1px solid rgba(148,163,184,0.7);
+    padding:5px 8px;
+}
+</style>
 </head>
-
 <body>
 <div class="container">
-    <header>
-        <h1>🎥 Surveillance IoT – Gestion de Stock</h1>
-        <p>Raspberry Pi · WebSocket temps réel · InvenTree · ESP32-CAM · IA embarquée</p>
 
-        <!-- Onglets -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="surveillance">Surveillance</button>
-            <button class="tab-btn" data-tab="config">Configuration palettes</button>
-        </div>
-    </header>
+<header>
+    <h1>🎥 Surveillance IoT – Gestion de Stock</h1>
+    <p>Raspberry Pi · WebSocket temps réel · InvenTree · ESP32-CAM · IA embarquée</p>
 
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="surveillance">Surveillance</button>
+        <button class="tab-btn" data-tab="config">Configuration palettes</button>
+    </div>
+</header>
     <div class="tab-content">
 
-        <!-- ========================================================= -->
-        <!-- ===================== TAB SURVEILLANCE ================== -->
-        <!-- ========================================================= -->
-        <section id="tab-surveillance" class="tab-panel active">
+<!-- ========================================================= -->
+<!-- ===================== TAB SURVEILLANCE ================== -->
+<!-- ========================================================= -->
+<section id="tab-surveillance" class="tab-panel active">
 
-            <!-- ====== STATISTIQUES GLOBALES ====== -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Colis total détectés</div>
-                    <div class="stat-value" id="stat-total">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Nombre de palettes</div>
-                    <div class="stat-value" id="stat-palettes">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Taux de remplissage</div>
-                    <div class="stat-value" id="stat-fill">0%</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="fill-progress"></div>
-                    </div>
+    <!-- ====== STATISTIQUES GLOBALES ====== -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">Colis total détectés</div>
+            <div class="stat-value" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Nombre de palettes</div>
+            <div class="stat-value" id="stat-palettes">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Taux de remplissage</div>
+            <div class="stat-value" id="stat-fill">0%</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="fill-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== CAMERA + STATUT SYSTEME ====== -->
+    <div class="dashboard-grid dashboard-main">
+
+        <!-- ====== CAMERA ====== -->
+        <div class="card camera-card">
+            <h3>Caméra entrepôt</h3>
+
+            <div class="camera-preview">
+                <img id="camera-stream"
+                     src="http://192.168.100.182:5000/video_feed"
+                     alt="Flux caméra"
+                     style="display:none;">
+                <div class="placeholder" id="camera-placeholder">
+                    Connexion au flux vidéo…<br>
+                    http://192.168.100.182:5000/video_feed
                 </div>
             </div>
 
-            <!-- ====== CAMERA + STATUT SYSTEME ====== -->
-            <div class="dashboard-grid dashboard-main">
-
-                <!-- ====== CAMERA ====== -->
-                <div class="card camera-card">
-                    <h3>Caméra entrepôt</h3>
-
-                    <div class="camera-preview">
-                        <img id="camera-stream"
-                             src="http://192.168.100.182:5000/video"
-                             alt="Flux caméra"
-                             style="display:none;">
-                        <div class="placeholder" id="camera-placeholder">
-                            Connexion au flux vidéo…<br>
-                            http://192.168.100.182:5000/video
-                        </div>
-                    </div>
-
-                    <div id="camera-status"
-                         style="margin-top:8px; font-size:13px; color:#9ca3af;">
-                         Statut caméra : <span id="camera-status-value">⏳ Vérification…</span>
-                    </div>
-
-                    <!-- ====== METRIQUES CAMERA / WS ====== -->
-                    <div class="cam-metrics">
-                        <div><span class="cam-metric-label">WebSocket</span>
-                             <span class="cam-metric-value" id="ws-status">⏳ Connexion…</span>
-                        </div>
-                        <div><span class="cam-metric-label">Dernier message WS</span>
-                             <span class="cam-metric-value" id="ws-last-msg">—</span>
-                        </div>
-                        <div><span class="cam-metric-label">Dernière maj palettes</span>
-                             <span class="cam-metric-value" id="ws-last-palettes">—</span>
-                        </div>
-                        <div><span class="cam-metric-label">Flux vidéo</span>
-                             <span class="cam-metric-value" id="cam-stream-status">En cours…</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ====== STATUT SYSTEME ====== -->
-                <div class="card">
-                    <h3>Statut & spécifications système</h3>
-<!-- ===================================================== -->
-<!-- ========== 👇👇  BLOC IA À AJOUTER  👇👇 -->
-<!-- ===================================================== -->
-<h3 style="margin-top:18px; font-size:15px; color:#93c5fd;">
-    📦 Analyse IA en direct (ESP32-CAM)
-</h3>
-
-<div class="ia-grid">
-    <div class="ia-item">
-        <div class="ia-label">Cartons détectés</div>
-        <div class="ia-value" id="ia-cartons">—</div>
-    </div>
-    <div class="ia-item">
-        <div class="ia-label">FPS IA</div>
-        <div class="ia-value" id="ia-fps">—</div>
-    </div>
-    <div class="ia-item">
-        <div class="ia-label">Images analysées</div>
-        <div class="ia-value" id="ia-framecount">—</div>
-    </div>
-    <div class="ia-item">
-        <div class="ia-label">Motif utilisé</div>
-        <div class="ia-value" id="ia-motif">—</div>
-    </div>
-    <div class="ia-item">
-        <div class="ia-label">Motifs valides</div>
-        <div class="ia-value" id="ia-valid">—</div>
-    </div>
-    <div class="ia-item">
-        <div class="ia-label">Verdict IA</div>
-        <div class="ia-value" id="ia-verdict">—</div>
-    </div>
-</div>
-
-                    <div class="specs-grid">
-                        <div class="info-item">
-                            <label>Latence WebSocket typique</label>
-                            <div class="value">≈ 18 ms</div>
-                        </div>
-                        <div class="info-item">
-                            <label>Cycle de mise à jour stock</label>
-                            <div class="value">2 s</div>
-                        </div>
-                        <div class="info-item">
-                            <label>Latence API InvenTree</label>
-                            <div class="value">&lt; 80 ms</div>
-                        </div>
-                        <div class="info-item">
-                            <label>Disponibilité cible</label>
-                            <div class="value">99,95 %</div>
-                        </div>
-                        <div class="info-item">
-                            <label>Plateforme</label>
-                            <div class="value">Raspberry Pi · Python · WebSockets</div>
-                        </div>
-                        <div class="info-item">
-                            <label>Flux caméra</label>
-                            <div class="value">ESP32-CAM · 720p</div>
-                        </div>
-                    </div>
-
-                    <div class="spec-note">Perfomances en direct du serveur et des flux.</div>
-
-                    <!-- ===================================================== -->
-                    <!-- ========== 👇👇  NOUVEAU BLOC IA SOUS LE RESTE  👇👇 -->
-                    <!-- ===================================================== -->
-                    <h3 style="margin-top:18px; font-size:15px; color:#93c5fd;">
-                        📦 Analyse IA en direct (ESP32-CAM)
-                    </h3>
-
-                    <div class="ia-grid">
-                        <div class="ia-item">
-                            <div class="ia-label">Cartons détectés</div>
-                            <div class="ia-value" id="ia-cartons">—</div>
-                        </div>
-                        <div class="ia-item">
-                            <div class="ia-label">FPS IA</div>
-                            <div class="ia-value" id="ia-fps">—</div>
-                        </div>
-                        <div class="ia-item">
-                            <div class="ia-label">Images analysées</div>
-                            <div class="ia-value" id="ia-framecount">—</div>
-                        </div>
-                        <div class="ia-item">
-                            <div class="ia-label">Motif utilisé</div>
-                            <div class="ia-value" id="ia-motif">—</div>
-                        </div>
-                        <div class="ia-item">
-                            <div class="ia-label">Motifs valides</div>
-                            <div class="ia-value" id="ia-valid">—</div>
-                        </div>
-                        <div class="ia-item">
-                            <div class="ia-label">Verdict IA</div>
-                            <div class="ia-value" id="ia-verdict">—</div>
-                        </div>
-                    </div>
-                    <!-- FIN BLOC IA -->
-                </div>
-            </div>
-            <!-- ============ PALETTES INVENTREE ============ -->
-            <h3 style="margin: 10px 2px 8px;">Palettes & contenu (InvenTree)</h3>
-            <div class="dashboard-grid" id="palettes-container">
-                <!-- Rempli dynamiquement -->
+            <div id="camera-status"
+                 style="margin-top:8px; font-size:13px; color:#9ca3af;">
+                 Statut caméra : <span id="camera-status-value">⏳ Vérification…</span>
             </div>
 
-        </section>
+            <!-- ====== METRIQUES CAMERA / WS ====== -->
+            <div class="cam-metrics">
+                <div><span class="cam-metric-label">WebSocket</span>
+                     <span class="cam-metric-value" id="ws-status">⏳ Connexion…</span>
+                </div>
+                <div><span class="cam-metric-label">Dernier message WS</span>
+                     <span class="cam-metric-value" id="ws-last-msg">—</span>
+                </div>
+                <div><span class="cam-metric-label">Dernière maj palettes</span>
+                     <span class="cam-metric-value" id="ws-last-palettes">—</span>
+                </div>
+                <div><span class="cam-metric-label">Flux vidéo</span>
+                     <span class="cam-metric-value" id="cam-stream-status">En cours…</span>
+                </div>
+            </div>
+        </div>
 
-        <!-- ========================================================= -->
-        <!-- ===================== TAB CONFIGURATION ================= -->
-        <!-- ========================================================= -->
-        <section id="tab-config" class="tab-panel">
-            <p class="config-help">
-                Ici tu définis <strong>la répartition attendue</strong> des cartons par palette.<br>
-                Le système vérifiera ensuite en temps réel et affichera ✔/❌ dans l’onglet
-                <em>Surveillance</em>.
-            </p>
+        <!-- ====== STATUT SYSTEME + IA ====== -->
+        <div class="card">
+            <h3>Statut & spécifications système</h3>
 
-            <div class="dashboard-grid" id="config-container"></div>
+            <!-- ====== STATISTIQUES IA EN DIRECT ====== -->
+            <h3 style="margin-top:18px; margin-bottom:10px; color:#93c5fd;">
+                📦 Analyse IA en direct (ESP32-CAM)
+            </h3>
 
-            <button class="config-save-all" id="btn-save-config">
-                💾 Enregistrer la configuration
-            </button>
-        </section>
+            <div class="live-stats-grid">
+
+                <div class="live-stat-card">
+                    <div class="live-stat-label">Cartons détectés</div>
+                    <div class="live-stat-value" id="st-detected">—</div>
+                </div>
+
+                <div class="live-stat-card">
+                    <div class="live-stat-label">FPS Analyse</div>
+                    <div class="live-stat-value" id="st-fps">—</div>
+                </div>
+
+                <div class="live-stat-card">
+                    <div class="live-stat-label">Images traitées</div>
+                    <div class="live-stat-value" id="st-frame">—</div>
+                </div>
+
+                <div class="live-stat-card">
+                    <div class="live-stat-label">Motif utilisé</div>
+                    <div class="live-stat-value" id="st-motif">—</div>
+                </div>
+
+                <div class="live-stat-card">
+                    <div class="live-stat-label">Motifs valides</div>
+                    <div class="live-stat-value" id="st-valid">—</div>
+                </div>
+
+                <div class="live-stat-card">
+                    <div class="live-stat-label">Verdict IA</div>
+                    <div class="live-stat-value" id="st-verdict">—</div>
+                </div>
+
+            </div>
+
+            <div class="live-legend">
+                <h4>Légende :</h4>
+                <div class="legend-line">
+                    <span class="legend-box green"></span> Motif valide (zone correcte)
+                </div>
+                <div class="legend-line">
+                    <span class="legend-box red"></span> Motif invalide (hors zone)
+                </div>
+            </div>
+
+            <div class="specs-grid" style="margin-top:18px;">
+                <div class="info-item"><label>Latence WebSocket typique</label><div class="value">≈ 18 ms</div></div>
+                <div class="info-item"><label>Cycle de mise à jour stock</label><div class="value">2 s</div></div>
+                <div class="info-item"><label>Latence API InvenTree</label><div class="value">&lt; 80 ms</div></div>
+                <div class="info-item"><label>Disponibilité cible</label><div class="value">99,95 %</div></div>
+                <div class="info-item"><label>Plateforme</label><div class="value">Raspberry Pi · Python · WebSockets</div></div>
+                <div class="info-item"><label>Flux caméra</label><div class="value">ESP32-CAM · 720p</div></div>
+            </div>
+
+        </div>
     </div>
-</div>
 
-<!-- ============================================================== -->
-<!-- =============== SCRIPT JAVASCRIPT COMPLET ==================== -->
-<!-- ============================================================== -->
+    <!-- ====== PALETTES INVENTREE ====== -->
+    <h3 style="margin: 10px 2px 8px;">Palettes & contenu (InvenTree)</h3>
+    <div class="dashboard-grid" id="palettes-container"></div>
+
+</section>
+
+<!-- ========================================================= -->
+<!-- ===================== TAB CONFIGURATION ================= -->
+<!-- ========================================================= -->
+<section id="tab-config" class="tab-panel">
+    <p style="color:#9ca3af; font-size:13px; margin-bottom:12px;">
+        Configure ici les cartons attendus pour chaque palette.
+    </p>
+
+    <div class="dashboard-grid" id="config-container"></div>
+
+    <button class="config-save-all" id="btn-save-config">
+        💾 Enregistrer la configuration
+    </button>
+</section>
+
+</div><!-- /tab-content -->
+</div><!-- /container -->
 <script>
-
-//////////////////////////////////////////////////////////////
-// VARIABLES GLOBALES
-//////////////////////////////////////////////////////////////
-const ws = new WebSocket("ws://192.168.100.112:8765");
+// =========================================================
+// 🔧 CONFIG
+// =========================================================
+const WS_URL = "ws://192.168.100.112:8765";
+const STATS_URL = "http://192.168.100.182:5000/stats";   // CORRECT
+const VIDEO_URL = "http://192.168.100.182:5000/video_feed";
 
 let lastPalettes = [];
 let palettesConfig = {};
 let lastWsMessageTime = null;
 
-//////////////////////////////////////////////////////////////
-// ONGLET
-//////////////////////////////////////////////////////////////
+// =========================================================
+// 🔄 ONGLET
+// =========================================================
 document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         const tab = btn.getAttribute("data-tab");
 
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-
         btn.classList.add("active");
+
+        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
         document.getElementById("tab-" + tab).classList.add("active");
 
         if (tab === "config") renderConfigTab();
     });
 });
 
-//////////////////////////////////////////////////////////////
-// CAMERA EVENT LISTENERS
-//////////////////////////////////////////////////////////////
+// =========================================================
+// 📷 GESTION CAMERA
+// =========================================================
 const camImg = document.getElementById("camera-stream");
 const camPlaceholder = document.getElementById("camera-placeholder");
 
@@ -384,27 +382,24 @@ camImg.onload = () => {
     camPlaceholder.style.display = "none";
     document.getElementById("cam-stream-status").textContent = "Flux actif";
 };
-
 camImg.onerror = () => {
     camImg.style.display = "none";
     camPlaceholder.style.display = "block";
-    camPlaceholder.innerHTML = "Flux indisponible<br>192.168.100.182:5000";
+    camPlaceholder.innerHTML = "Flux indisponible<br>" + VIDEO_URL;
     document.getElementById("cam-stream-status").textContent = "Erreur flux";
 };
 
+// Anti-freeze toutes les 20 s
 setInterval(() => {
-    camImg.src = "http://192.168.100.182:5000/video?ts=" + Date.now();
+    camImg.src = VIDEO_URL + "?ts=" + Date.now();
 }, 20000);
 
-//////////////////////////////////////////////////////////////
-// WEBSOCKET INVENTREE
-//////////////////////////////////////////////////////////////
-ws.onopen = () => {
-    setWsStatus("🟢 Connecté", "#4ade80");
-    lastWsMessageTime = new Date();
-    updateWsLastMessage();
-};
+// =========================================================
+// 🔌 WEBSOCKET INVENTREE
+// =========================================================
+const ws = new WebSocket(WS_URL);
 
+ws.onopen = () => setWsStatus("🟢 Connecté", "#4ade80");
 ws.onerror = () => setWsStatus("🔴 Erreur", "#ef4444");
 ws.onclose = () => setWsStatus("🔴 Déconnecté", "#ef4444");
 
@@ -413,6 +408,7 @@ ws.onmessage = (event) => {
     updateWsLastMessage();
 
     const msg = JSON.parse(event.data);
+    
     if (!msg.inventree || !msg.inventree.palettes) return;
 
     lastPalettes = msg.inventree.palettes;
@@ -432,15 +428,11 @@ function updateWsLastMessage() {
     el.textContent = lastWsMessageTime ? lastWsMessageTime.toLocaleTimeString() : "—";
 }
 
-//////////////////////////////////////////////////////////////
-// CONFIG LOCALSTORAGE
-//////////////////////////////////////////////////////////////
+// =========================================================
+// 💾 CONFIG LOCALSTORAGE
+// =========================================================
 function loadConfig() {
-    try {
-        palettesConfig = JSON.parse(localStorage.getItem("palettesConfig")) || {};
-    } catch {
-        palettesConfig = {};
-    }
+    palettesConfig = JSON.parse(localStorage.getItem("palettesConfig") || "{}");
 }
 loadConfig();
 
@@ -449,57 +441,49 @@ function saveConfig() {
     alert("Configuration enregistrée !");
 }
 
-//////////////////////////////////////////////////////////////
-// COMPARAISON CONFIG / REEL
-//////////////////////////////////////////////////////////////
+// =========================================================
+// 🔍 COMPARAISON CONFIG VS REEL
+// =========================================================
 function computeComplianceForPalette(p) {
-    const name = p.name;
-    const expected = palettesConfig[name] || {};
+    const expected = palettesConfig[p.name] || {};
     const actual = {};
 
     (p.items || []).forEach(it => {
-        const n = it.name;
-        actual[n] = (actual[n] || 0) + Number(it.qty || it.quantity || 0);
+        actual[it.name] = (actual[it.name] || 0) + Number(it.qty || it.quantity || 0);
     });
 
     const errors = [];
     let ok = true;
 
-    Object.keys(expected).forEach(key => {
-        const exp = expected[key];
-        const act = actual[key] || 0;
+    // Manques / trop
+    Object.keys(expected).forEach(name => {
+        const exp = expected[name];
+        const act = actual[name] || 0;
 
-        if (act < exp) {
+        if (act < exp) { ok = false; errors.push(`Manque ${exp - act} × ${name}`); }
+        if (act > exp) { ok = false; errors.push(`${act - exp} × ${name} en trop`); }
+    });
+
+    // Cartons non prévus
+    Object.keys(actual).forEach(name => {
+        if (!(name in expected)) {
             ok = false;
-            errors.push(`Manque ${exp - act} × ${key}`);
-        }
-        if (act > exp) {
-            ok = false;
-            errors.push(`${act - exp} × ${key} en trop`);
+            errors.push(`Carton non prévu : ${name} (x${actual[name]})`);
         }
     });
 
-    Object.keys(actual).forEach(key => {
-        if (!(key in expected)) {
-            ok = false;
-            errors.push(`Carton non prévu : ${key} (x${actual[key]})`);
-        }
-    });
-
-    let status = "unknown";
-    if (Object.keys(expected).length === 0) status = "unknown";
-    else if (ok) status = "ok";
-    else status = "error";
-
-    return { status, errors, expected, actual };
+    return {
+        status: Object.keys(expected).length === 0 ? "unknown" : (ok ? "ok" : "error"),
+        errors,
+        expected
+    };
 }
 
-//////////////////////////////////////////////////////////////
-// RENDER SURVEILLANCE
-//////////////////////////////////////////////////////////////
+// =========================================================
+// 📊 MISE À JOUR DASHBOARD
+// =========================================================
 function updateDashboard() {
-    let total = 0;
-    lastPalettes.forEach(p => total += Number(p.total_qty));
+    let total = lastPalettes.reduce((s, p) => s + (Number(p.total_qty) || 0), 0);
 
     document.getElementById("stat-total").textContent = total;
     document.getElementById("stat-palettes").textContent = lastPalettes.length;
@@ -511,73 +495,76 @@ function updateDashboard() {
     renderPalettesSurveillance();
 }
 
+// =========================================================
+// 🟦 AFFICHAGE DES PALETTES
+// =========================================================
 function renderPalettesSurveillance() {
-    const div = document.getElementById("palettes-container");
-    div.innerHTML = "";
+    const container = document.getElementById("palettes-container");
+    container.innerHTML = "";
 
     lastPalettes.forEach(p => {
         const { status, errors, expected } = computeComplianceForPalette(p);
 
+        let classStatus = "status-unknown";
+        let textStatus = "Configuration manquante";
+
+        if (status === "ok") { classStatus = "status-ok"; textStatus = "Palette conforme"; }
+        if (status === "error") { classStatus = "status-error"; textStatus = "Palette non conforme"; }
+
         const card = document.createElement("div");
         card.className = "card";
 
-        let statusLabel = "Configuration manquante";
-        let statusClass = "status-unknown";
-
-        if (status === "ok") {
-            statusLabel = "Palette conforme";
-            statusClass = "status-ok";
-        }
-        if (status === "error") {
-            statusLabel = "Palette non conforme";
-            statusClass = "status-error";
-        }
-
-        let itemsHtml = "";
-        p.items.forEach(it => {
-            const exp = expected[it.name];
-            itemsHtml += `
-                <div>
-                    <span>
-                        <span class="name">${it.name}</span>
-                        ${it.description ? `<span class="desc">${it.description}</span>` : ""}
-                    </span>
-                    <span>
-                        <span class="qty">${it.qty}</span>
-                        ${exp !== undefined ? `<span class="expect">(attendu : ${exp})</span>` : ""}
-                    </span>
-                </div>`;
+        let items = "";
+        (p.items || []).forEach(it => {
+            items += `
+            <div>
+                <span><span class="name">${it.name}</span></span>
+                <span>
+                    <span class="qty">${it.qty}</span>
+                    ${expected[it.name] !== undefined ? `<span class="expect">(attendu : ${expected[it.name]})</span>` : ""}
+                </span>
+            </div>`;
         });
 
         card.innerHTML = `
             <h3>${p.name}</h3>
-            <div class="palette-status ${statusClass}">${statusLabel}</div>
-            <div class="items-list">${itemsHtml}</div>
+            <div class="palette-status ${classStatus}">${textStatus}</div>
+
+            <div class="info-grid">
+                <div class="info-item"><label>Colis</label><div class="value">${p.total_qty}</div></div>
+                <div class="info-item"><label>Articles</label><div class="value">${p.items.length}</div></div>
+            </div>
+
+            <div class="items-list">${items}</div>
+
             <div class="error-details">${errors.join("<br>")}</div>
         `;
 
-        div.appendChild(card);
+        container.appendChild(card);
     });
 }
 
-//////////////////////////////////////////////////////////////
-// RENDER CONFIG TAB
-//////////////////////////////////////////////////////////////
+// =========================================================
+// 🔧 RENDER CONFIG
+// =========================================================
 function renderConfigTab() {
     const div = document.getElementById("config-container");
     div.innerHTML = "";
 
     lastPalettes.forEach(p => {
+        const cfg = palettesConfig[p.name] || {};
+        
         const card = document.createElement("div");
         card.className = "config-card";
 
-        const cfg = palettesConfig[p.name] || {};
-        const lines = Object.keys(cfg).map(k => createConfigLineHtml(p.name, k, cfg[k])).join("");
+        let lines = Object.keys(cfg).map(name => createConfigLineHtml(p.name, name, cfg[name])).join("");
+
+        if (lines === "") lines = createConfigLineHtml(p.name, "", "");
 
         card.innerHTML = `
             <h4>${p.name}</h4>
             <div class="config-lines" data-palette="${p.name}">
-                ${lines || createConfigLineHtml(p.name, "", "")}
+                ${lines}
             </div>
             <div class="config-actions">
                 <button class="config-btn small" data-action="add-line" data-palette="${p.name}">+ Ajouter</button>
@@ -591,13 +578,13 @@ function renderConfigTab() {
     attachConfigEvents();
 }
 
-function createConfigLineHtml(palette, name, qty) {
+function createConfigLineHtml(pName, name, qty) {
     return `
-        <div class="config-line">
-            <input type="text" class="cfg-name" value="${name}">
-            <input type="number" class="cfg-qty" value="${qty}">
-            <button class="config-btn small cfg-remove">✖</button>
-        </div>`;
+    <div class="config-line">
+        <input type="text" class="cfg-name" value="${name}">
+        <input type="number" class="cfg-qty" min="0" value="${qty}">
+        <button class="config-btn small cfg-remove">✖</button>
+    </div>`;
 }
 
 function attachConfigEvents() {
@@ -605,7 +592,7 @@ function attachConfigEvents() {
         const btn = e.target.closest("button");
         if (!btn) return;
 
-        const pName = btn.getAttribute("data-palette");
+        const pName = btn.dataset.palette;
         const card = btn.closest(".config-card");
         const linesDiv = card.querySelector(".config-lines");
 
@@ -634,6 +621,7 @@ function attachConfigEvents() {
 
 document.getElementById("btn-save-config").onclick = () => {
     palettesConfig = {};
+
     document.querySelectorAll(".config-card").forEach(card => {
         const pName = card.querySelector(".config-lines").dataset.palette;
         palettesConfig[pName] = {};
@@ -649,39 +637,38 @@ document.getElementById("btn-save-config").onclick = () => {
     renderPalettesSurveillance();
 };
 
-//////////////////////////////////////////////////////////////
-// 🔥🔥🔥 RÉCUPÉRATION DES DONNÉES IA : /stats 🔥🔥🔥
-//////////////////////////////////////////////////////////////
-async function updateIAStats() {
+// =========================================================
+// 🔥🔥🔥 RÉCUPÉRATION IA : /stats 🔥🔥🔥
+// =========================================================
+async function updateAIStats() {
     try {
-        const res = await fetch("http://192.168.100.182:5000/stats", { cache: "no-store" });
-        const data = await res.json();
+        const res = await fetch(STATS_URL, { cache: "no-store" });
+        const d = await res.json();
 
-        // 🟢 Mise à jour des champs IA
-        document.getElementById("ia-cartons").textContent = data.cartons ?? "—";
-        document.getElementById("ia-fps").textContent = data.fps ?? "—";
-        document.getElementById("ia-framecount").textContent = data.frame_count ?? "—";
-        document.getElementById("ia-motif").textContent = data.motif_used ?? "—";
-        document.getElementById("ia-valid").textContent = data.motifs_valides ?? "—";
+        // 🔥 MAP EXACTE SELON TES DONNÉES
+        document.getElementById("st-detected").textContent = d.cartons ?? "—";
+        document.getElementById("st-fps").textContent = d.fps ?? "—";
+        document.getElementById("st-frame").textContent = d.frame_count ?? "—";
+        document.getElementById("st-motif").textContent = d.motif_used ?? "—";
+        document.getElementById("st-valid").textContent = `${d.motifs_valides ?? 0}/${d.motifs_total ?? 0}`;
 
-        const verdictEl = document.getElementById("ia-verdict");
-        verdictEl.textContent = data.verdict ?? "—";
+        const verdict = document.getElementById("st-verdict");
+        verdict.textContent = d.verdict ?? "—";
 
-        // Code couleur du verdict
-        if (data.verdict === "OK") verdictEl.style.color = "#4ade80";
-        else if (data.verdict === "NOK") verdictEl.style.color = "#f87171";
-        else verdictEl.style.color = "#e5e7eb";
+        // Code couleur
+        verdict.style.color = (d.verdict === "OK") ? "#4ade80" :
+                              (d.verdict === "NOK") ? "#f87171" :
+                              "#e5e7eb";
 
-    } catch (err) {
-        console.error("Erreur /stats :", err);
+    } catch (e) {
+        document.getElementById("st-verdict").textContent = "Hors ligne";
+        document.getElementById("st-verdict").style.color = "#f87171";
     }
 }
 
-// 🔄 Mise à jour IA toutes les 0.5 s
-setInterval(updateIAStats, 500);
-updateIAStats();
+// 🔄 Mise à jour IA toutes les 500 ms
+setInterval(updateAIStats, 500);
+updateAIStats();
 
 </script>
-</body>
-</html>
 
