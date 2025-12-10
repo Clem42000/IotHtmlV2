@@ -346,6 +346,42 @@
             color: #9ca3af;
         }
 
+        /* Bloc ANALYSE IA */
+        .ia-block {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(96, 165, 250, 0.35);
+        }
+
+        .ia-block h4 {
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #bfdbfe;
+        }
+
+        .ia-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .ia-item label {
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+        }
+
+        .ia-item span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+
         /* Config tab */
         .config-help {
             font-size: 13px;
@@ -485,12 +521,12 @@
                     <h3>Caméra entrepôt</h3>
                     <div class="camera-preview">
                         <img id="camera-stream"
-                             src="http://192.168.100.182:5000/video_feed"
+                             src="http://192.168.100.182:5000/video"
                              alt="Flux caméra"
                              style="display:none;">
                         <div class="placeholder" id="camera-placeholder">
                             Connexion au flux vidéo…<br>
-                            http://192.168.100.182:5000/video_feed
+                            http://192.168.100.182:5000/video
                         </div>
                     </div>
 
@@ -558,6 +594,39 @@
                     <div class="spec-note">
                         Perfomances en direct du serveur et des flux.
                     </div>
+
+                    <!-- === BLOC ANALYSE IA (live) === -->
+                    <div class="ia-block">
+                        <h4>Analyse IA (live)</h4>
+                        <div class="ia-grid">
+                            <div class="ia-item">
+                                <label>Cartons détectés</label>
+                                <span id="ia-cartons">—</span>
+                            </div>
+                            <div class="ia-item">
+                                <label>FPS traitement</label>
+                                <span id="ia-fps">—</span>
+                            </div>
+                            <div class="ia-item">
+                                <label>Images traitées</label>
+                                <span id="ia-frame">—</span>
+                            </div>
+                            <div class="ia-item">
+                                <label>Motif utilisé</label>
+                                <span id="ia-motif">—</span>
+                            </div>
+                            <div class="ia-item">
+                                <label>Motifs valides</label>
+                                <span id="ia-valid">—</span>
+                            </div>
+                            <div class="ia-item">
+                                <label>Verdict</label>
+                                <span id="ia-verdict">—</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ============================== -->
+
                 </div>
             </div>
 
@@ -605,7 +674,7 @@
 
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            const target = btn.getAttribute('data-tab');  // <<< FIX ICI
+            const target = btn.getAttribute('data-tab');  // FIX
 
             if (target === "config") {
                 renderConfigTab();   // reconstruit seulement AU MOMENT où tu ouvres
@@ -640,13 +709,13 @@
     camImg.onerror = () => {
         camImg.style.display = 'none';
         camPlaceholder.style.display = 'block';
-        camPlaceholder.innerHTML = "Flux vidéo indisponible<br>192.168.100.182:5000";
+        camPlaceholder.innerHTML = "Flux vidéo indisponible<br>192.168.100.182:5000/video";
         if (camStreamStatus) camStreamStatus.textContent = "Erreur flux";
     };
 
     // Refresh anti-freeze (20 s)
     setInterval(() => {
-        camImg.src = "http://192.168.100.182:5000/video_feed?ts=" + Date.now();
+        camImg.src = "http://192.168.100.182:5000/video?ts=" + Date.now();
     }, 20000);
 
     // =============================
@@ -803,12 +872,6 @@
         document.getElementById('fill-progress').style.width = fillRate + "%";
 
         renderPalettesSurveillance();
-
-        // NE PLUS RECONSTRUIRE LE CONFIG A CHAQUE WEBSOCKET
-        if (document.querySelector("#tab-config").classList.contains("active")) {
-            // Option : reconstruire seulement si l’utilisateur ouvre le tab
-            // renderConfigTab();
-        }
     }
 
     // =============================
@@ -1032,31 +1095,61 @@
     });
 
     // =============================
-    // Vérification statut caméra
+    // Vérification statut caméra + ANALYSE IA (via /api/status)
     // =============================
-    async function updateCameraStatus() {
-        try {
-            const res = await fetch("http://192.168.100.182:5000/stats", { cache: "no-store" });
-            const data = await res.json();
+    const IA_URL = "http://192.168.100.182:5000/api/status";
 
-            const el = document.getElementById("camera-status-value");
+    function applyIaData(data) {
+        const get = id => document.getElementById(id);
 
-            if (data.status === "OK" || data.ok === true) {
-                el.innerHTML = "🟢 OK";
-                el.style.color = "#4ade80";
-            } else {
-                el.innerHTML = "🔴 Erreur";
-                el.style.color = "#f87171";
-            }
-        } catch (e) {
-            const el = document.getElementById("camera-status-value");
-            el.innerHTML = "🔴 Hors ligne";
-            el.style.color = "#f87171";
+        if (get("ia-cartons")) get("ia-cartons").textContent = data.cartons ?? "—";
+        if (get("ia-fps")) get("ia-fps").textContent = data.fps ?? "—";
+        if (get("ia-frame")) get("ia-frame").textContent = data.frame_count ?? "—";
+        if (get("ia-motif")) get("ia-motif").textContent = data.motif_used || "—";
+        if (get("ia-valid")) get("ia-valid").textContent = (data.motifs_valides ?? "-") + "/4";
+
+        if (get("ia-verdict")) {
+            const v = data.verdict || "—";
+            const span = get("ia-verdict");
+            span.textContent = v;
+            if (v === "OK") span.style.color = "#22c55e";
+            else if (v === "NOK") span.style.color = "#f97373";
+            else span.style.color = "#e5e7eb";
         }
     }
 
-    // Mise à jour toutes les 2 secondes
-    setInterval(updateCameraStatus, 2000);
+    async function updateCameraStatus() {
+        const el = document.getElementById("camera-status-value");
+        try {
+            const res = await fetch(IA_URL, { cache: "no-store" });
+            const data = await res.json();
+
+            if (el) {
+                el.innerHTML = "🟢 Online";
+                el.style.color = "#4ade80";
+            }
+
+            // applique les valeurs IA dans le bloc de droite
+            applyIaData(data);
+        } catch (e) {
+            if (el) {
+                el.innerHTML = "🔴 Hors ligne";
+                el.style.color = "#f87171";
+            }
+            // reset IA affichage
+            applyIaData({
+                cartons: "—",
+                fps: "—",
+                frame_count: "—",
+                motif_used: "—",
+                motifs_valides: "—",
+                verdict: "—"
+            });
+        }
+    }
+
+    // Mise à jour toutes les 0.5 s (à adapter si besoin)
+    setInterval(updateCameraStatus, 500);
     updateCameraStatus(); // premier appel immédiat
 </script>
 </body>
