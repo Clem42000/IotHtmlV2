@@ -179,33 +179,57 @@
         /* Camera */
         .camera-card {}
 
-.camera-preview {
-    width: 100%;
-    height: 260px; /* un peu plus haut pour garder un format carré */
-    background: #0f172a;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border: 2px solid rgba(96, 165, 250, 0.25);
-}
+        .camera-preview {
+            width: 100%;
+            height: 260px; /* un peu plus haut pour garder un format carré */
+            background: #0f172a;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid rgba(96, 165, 250, 0.25);
+        }
 
-.camera-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* AU LIEU DE cover → image moins zoomée et non étirée */
-    background-color: #0f172a; /* fond propre autour */
-}
-
+        .camera-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* image moins zoomée et non étirée */
+            background-color: #0f172a;
+        }
 
         .camera-preview .placeholder {
             color: #64748b;
             font-size: 14px;
             text-align: center;
         }
-        
+
+        /* Bloc premium métriques caméra / WS */
+        .cam-metrics {
+            margin-top: 8px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(96, 165, 250, 0.25);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 6px 10px;
+            font-size: 12px;
+        }
+
+        .cam-metric-label {
+            display: block;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 10px;
+            margin-bottom: 2px;
+        }
+
+        .cam-metric-value {
+            font-weight: 600;
+        }
 
         /* Palettes / status */
         .palette-status {
@@ -290,7 +314,6 @@
             color: #9ca3af;
             margin-top: 2px;
         }
-
 
         .items-list span.qty {
             color: #93c5fd;
@@ -465,19 +488,38 @@
                              src="http://192.168.100.182:5000/video_feed"
                              alt="Flux caméra"
                              style="display:none;">
-                    
                         <div class="placeholder" id="camera-placeholder">
                             Connexion au flux vidéo…<br>
                             http://192.168.100.182:5000/video_feed
                         </div>
                     </div>
-                    <div id="camera-status" 
-                            style="margin-top:8px; font-size:13px; color:#9ca3af; padding:6px 0;">
-                            Statut caméra : <span id="camera-status-value">⏳ Vérification…</span>
+
+                    <div id="camera-status"
+                         style="margin-top:8px; font-size:13px; color:#9ca3af; padding:6px 0;">
+                        Statut caméra : <span id="camera-status-value">⏳ Vérification…</span>
                     </div>
 
+                    <!-- Bloc premium métriques techniques -->
+                    <div class="cam-metrics">
+                        <div>
+                            <span class="cam-metric-label">WebSocket</span>
+                            <span class="cam-metric-value" id="ws-status">⏳ Connexion…</span>
+                        </div>
+                        <div>
+                            <span class="cam-metric-label">Dernier message WS</span>
+                            <span class="cam-metric-value" id="ws-last-msg">—</span>
+                        </div>
+                        <div>
+                            <span class="cam-metric-label">Dernière maj palettes</span>
+                            <span class="cam-metric-value" id="ws-last-palettes">—</span>
+                        </div>
+                        <div>
+                            <span class="cam-metric-label">Flux vidéo</span>
+                            <span class="cam-metric-value" id="cam-stream-status">En cours…</span>
+                        </div>
+                    </div>
 
-                    <div style="font-size: 12px; color:#9ca3af;">
+                    <div style="font-size: 12px; color:#9ca3af; margin-top:6px;">
                         Flux ESP32-CAM via Wi-Fi · Mise à jour automatique toutes les 0.1&nbsp;s.
                     </div>
                 </div>
@@ -547,6 +589,15 @@
 
 <script>
     // =============================
+    // Variables globales
+    // =============================
+    const ws = new WebSocket("ws://192.168.100.112:8765"); // adapte l’IP si besoin
+
+    let lastPalettes = [];
+    let palettesConfig = {}; // { "PALETTE 1": { "CARTON A": 2, ... } }
+    let lastWsMessageTime = null;
+
+    // =============================
     // Gestion des onglets
     // =============================
     const tabButtons = document.querySelectorAll('.tab-btn');
@@ -554,10 +605,11 @@
 
     tabButtons.forEach(btn => {
         btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-tab');  // <<< FIX ICI
+
             if (target === "config") {
                 renderConfigTab();   // reconstruit seulement AU MOMENT où tu ouvres
-}
-
+            }
 
             tabButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -577,33 +629,88 @@
     // =============================
     const camImg = document.getElementById('camera-stream');
     const camPlaceholder = document.getElementById('camera-placeholder');
+    const camStreamStatus = document.getElementById('cam-stream-status');
 
     camImg.onload = () => {
         camImg.style.display = 'block';
         camPlaceholder.style.display = 'none';
+        if (camStreamStatus) camStreamStatus.textContent = "Flux actif";
     };
 
     camImg.onerror = () => {
         camImg.style.display = 'none';
         camPlaceholder.style.display = 'block';
         camPlaceholder.innerHTML = "Flux vidéo indisponible<br>192.168.100.182:5000";
+        if (camStreamStatus) camStreamStatus.textContent = "Erreur flux";
     };
 
     // Refresh anti-freeze (20 s)
     setInterval(() => {
         camImg.src = "http://192.168.100.182:5000/video_feed?ts=" + Date.now();
-
     }, 20000);
 
     // =============================
     // WebSocket + InvenTree
     // =============================
-    const ws = new WebSocket("ws://192.168.100.112:8765"); // adapte l’IP si besoin
 
-    let lastPalettes = [];
-    let palettesConfig = {}; // { "PALETTE 1": { "CARTON A": 2, ... } }
+    function setWsStatus(text, color) {
+        const el = document.getElementById("ws-status");
+        if (el) {
+            el.textContent = text;
+            if (color) el.style.color = color;
+        }
+    }
 
-    // Charger config depuis localStorage
+    function updateWsLastMessage() {
+        const el = document.getElementById("ws-last-msg");
+        if (!el) return;
+        if (!lastWsMessageTime) {
+            el.textContent = "—";
+        } else {
+            el.textContent = lastWsMessageTime.toLocaleTimeString();
+        }
+    }
+
+    ws.onopen = () => {
+        console.log("WebSocket connecté");
+        setWsStatus("🟢 Connecté", "#4ade80");
+        lastWsMessageTime = new Date();
+        updateWsLastMessage();
+    };
+
+    ws.onerror = (err) => {
+        console.error("Erreur WebSocket :", err);
+        setWsStatus("🔴 Erreur", "#f97373");
+    };
+
+    ws.onclose = () => {
+        console.warn("WebSocket fermé");
+        setWsStatus("🔴 Fermé", "#f97373");
+    };
+
+    ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+
+        lastWsMessageTime = new Date();
+        updateWsLastMessage();
+
+        if (!msg.inventree || !msg.inventree.palettes) {
+            console.warn("Format inattendu:", msg);
+            return;
+        }
+
+        lastPalettes = msg.inventree.palettes;
+        const elLastPal = document.getElementById("ws-last-palettes");
+        if (elLastPal) {
+            elLastPal.textContent = new Date().toLocaleTimeString();
+        }
+
+        updateDashboard();
+    };
+
+    // =============================
+    // Charger / sauvegarder la config
+    // =============================
     function loadConfig() {
         try {
             const raw = localStorage.getItem('palettesConfig');
@@ -618,37 +725,12 @@
         }
     }
 
-    // Sauver config dans localStorage
     function saveConfig() {
         localStorage.setItem('palettesConfig', JSON.stringify(palettesConfig));
         alert("Configuration palettes sauvegardée (localStorage navigateur).");
     }
 
     loadConfig();
-
-    ws.onopen = () => {
-        console.log("WebSocket connecté");
-    };
-
-    ws.onerror = (err) => {
-        console.error("Erreur WebSocket :", err);
-    };
-
-    ws.onclose = () => {
-        console.warn("WebSocket fermé");
-    };
-
-    ws.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-
-        if (!msg.inventree || !msg.inventree.palettes) {
-            console.warn("Format inattendu:", msg);
-            return;
-        }
-
-        lastPalettes = msg.inventree.palettes;
-        updateDashboard();
-    };
 
     // =============================
     // Comparaison config vs réel
@@ -703,7 +785,7 @@
     }
 
     // =============================
-    // Mise à jour dashboard (Surveillance + Config)
+    // Mise à jour dashboard
     // =============================
     function updateDashboard() {
         // Stats globales
@@ -722,12 +804,11 @@
 
         renderPalettesSurveillance();
 
-// NE PLUS RECONSTRUIRE LE CONFIG A CHAQUE WEBSOCKET
-if (document.querySelector("#tab-config").classList.contains("active")) {
-    // Option : reconstruire seulement si l’utilisateur ouvre le tab
-    // renderConfigTab();
-}
-
+        // NE PLUS RECONSTRUIRE LE CONFIG A CHAQUE WEBSOCKET
+        if (document.querySelector("#tab-config").classList.contains("active")) {
+            // Option : reconstruire seulement si l’utilisateur ouvre le tab
+            // renderConfigTab();
+        }
     }
 
     // =============================
@@ -772,7 +853,6 @@ if (document.querySelector("#tab-config").classList.contains("active")) {
                         </span>
                     </div>
                 `;
-
             });
 
             let errorHtml = "";
@@ -950,34 +1030,34 @@ if (document.querySelector("#tab-config").classList.contains("active")) {
         // Met à jour l’onglet surveillance avec la nouvelle config
         renderPalettesSurveillance();
     });
+
     // =============================
-// Vérification statut caméra
-// =============================
-async function updateCameraStatus() {
-    try {
-        const res = await fetch("http://192.168.100.182:5000/stats", { cache: "no-store" });
-        const data = await res.json();
+    // Vérification statut caméra
+    // =============================
+    async function updateCameraStatus() {
+        try {
+            const res = await fetch("http://192.168.100.182:5000/stats", { cache: "no-store" });
+            const data = await res.json();
 
-        const el = document.getElementById("camera-status-value");
+            const el = document.getElementById("camera-status-value");
 
-        if (data.status === "OK" || data.ok === true) {
-            el.innerHTML = "🟢 OK";
-            el.style.color = "#4ade80";
-        } else {
-            el.innerHTML = "🔴 Erreur";
+            if (data.status === "OK" || data.ok === true) {
+                el.innerHTML = "🟢 OK";
+                el.style.color = "#4ade80";
+            } else {
+                el.innerHTML = "🔴 Erreur";
+                el.style.color = "#f87171";
+            }
+        } catch (e) {
+            const el = document.getElementById("camera-status-value");
+            el.innerHTML = "🔴 Hors ligne";
             el.style.color = "#f87171";
         }
-    } catch (e) {
-        const el = document.getElementById("camera-status-value");
-        el.innerHTML = "🔴 Hors ligne";
-        el.style.color = "#f87171";
     }
-}
 
-// Mise à jour toutes les 2 secondes
-setInterval(updateCameraStatus, 2000);
-updateCameraStatus(); // premier appel immédiat
-
+    // Mise à jour toutes les 2 secondes
+    setInterval(updateCameraStatus, 2000);
+    updateCameraStatus(); // premier appel immédiat
 </script>
 </body>
 </html>
