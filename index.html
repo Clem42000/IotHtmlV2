@@ -439,6 +439,64 @@
                 font-size: 24px;
             }
         }
+        /* ======= Statistiques en direct ======= */
+.live-stats-grid {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 14px;
+}
+
+.live-stat-card {
+    background: rgba(15,23,42,0.6);
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(51,65,85,0.8);
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.live-stat-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+
+.live-stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e5e7eb;
+}
+
+.live-legend {
+    margin-top: 18px;
+    font-size: 14px;
+    color: #e5e7eb;
+}
+
+.legend-line {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+    gap: 6px;
+}
+
+.legend-box {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.legend-box.green {
+    background: #22c55e;
+}
+
+.legend-box.red {
+    background: #ef4444;
+}
+
     </style>
 </head>
 <body>
@@ -527,6 +585,46 @@
                 <!-- Specs système -->
                 <div class="card">
                     <h3>Statut & spécifications système</h3>
+                    <!-- ======= Statistiques en direct (IA / Vision) ======= -->
+<h3 style="margin-top:18px; margin-bottom:10px;">📊 Statistiques en direct</h3>
+
+<div class="live-stats-grid">
+    <div class="live-stat-card">
+        <div class="live-stat-label">Cartons détectés</div>
+        <div class="live-stat-value" id="st-detected">0</div>
+    </div>
+
+    <div class="live-stat-card">
+        <div class="live-stat-label">Verdict</div>
+        <div class="live-stat-value" id="st-verdict">—</div>
+    </div>
+
+    <div class="live-stat-card">
+        <div class="live-stat-label">Motifs valides</div>
+        <div class="live-stat-value" id="st-valid">0/0</div>
+    </div>
+
+    <div class="live-stat-card">
+        <div class="live-stat-label">Motif utilisé</div>
+        <div class="live-stat-value" id="st-motif">—</div>
+    </div>
+
+    <div class="live-stat-card">
+        <div class="live-stat-label">FPS</div>
+        <div class="live-stat-value" id="st-fps">0</div>
+    </div>
+</div>
+
+<div class="live-legend">
+    <h4>Légende :</h4>
+    <div class="legend-line">
+        <span class="legend-box green"></span> Motif valide (dans la zone)
+    </div>
+    <div class="legend-line">
+        <span class="legend-box red"></span> Motif invalide (hors zone)
+    </div>
+</div>
+
                     <div class="specs-grid">
                         <div class="info-item">
                             <label>Latence WebSocket typique</label>
@@ -1054,10 +1152,34 @@
             el.style.color = "#f87171";
         }
     }
+// =============================
+// Récupération stats IA (ESP32-CAM)
+// =============================
+async function updateAIStats() {
+    try {
+        const res = await fetch("http://192.168.100.182:5000/stats", { cache: "no-store" });
+        const data = await res.json();
+
+        document.getElementById("st-detected").textContent = data.detected ?? "0";
+        document.getElementById("st-verdict").textContent = data.verdict ?? "—";
+        document.getElementById("st-valid").textContent = `${data.valid ?? 0}/${data.total ?? 0}`;
+        document.getElementById("st-motif").textContent = data.motif ?? "—";
+        document.getElementById("st-fps").textContent = data.fps ?? "0";
+
+    } catch (e) {
+        document.getElementById("st-verdict").textContent = "Hors ligne";
+    }
+}
+
+// Mise à jour en continu
+setInterval(updateAIStats, 500);
+updateAIStats();
 
     // Mise à jour toutes les 2 secondes
     setInterval(updateCameraStatus, 2000);
     updateCameraStatus(); // premier appel immédiat
+
+    
 </script>
 </body>
 </html>
