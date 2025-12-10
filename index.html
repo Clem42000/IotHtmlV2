@@ -223,12 +223,12 @@ header p { font-size:13px; color:#94a3b8; }
 
             <div class="camera-preview">
                 <img id="camera-stream"
-                     src="http://192.168.100.182:5000/video_feed"
+                     src="http://192.168.100.182:5000/video"
                      alt="Flux caméra"
                      style="display:none;">
                 <div class="placeholder" id="camera-placeholder">
                     Connexion au flux vidéo…<br>
-                    http://192.168.100.182:5000/video_feed
+                    http://192.168.100.182:5000/video
                 </div>
             </div>
 
@@ -348,7 +348,7 @@ header p { font-size:13px; color:#94a3b8; }
 // =========================================================
 const WS_URL = "ws://192.168.100.112:8765";
 const STATS_URL = "http://192.168.100.182:5000/stats";   // CORRECT
-const VIDEO_URL = "http://192.168.100.182:5000/video_feed";
+const VIDEO_URL = "http://192.168.100.182:5000/video";
 
 let lastPalettes = [];
 let palettesConfig = {};
