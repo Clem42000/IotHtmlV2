@@ -671,3 +671,50 @@ setInterval(updateAIStats, 500);
 updateAIStats();
 
 </script>
+
+    <script>
+// =====================================================
+// 🔥 Récupération des stats IA depuis /api/status
+//    et injection dans les cartes IA existantes
+// =====================================================
+async function updateIAStats() {
+    try {
+        const res = await fetch("http://192.168.100.182:5000/api/status", { cache: "no-store" });
+        const data = await res.json();
+
+        // Debug console
+        console.log("IA DATA :", data);
+
+        // REMPLISSAGE DES CARTES IA
+        document.getElementById("ia-cartons").textContent = data.cartons ?? "—";
+        document.getElementById("ia-fps").textContent = data.fps ?? "—";
+        document.getElementById("ia-framecount").textContent = data.frame_count ?? "—";
+        document.getElementById("ia-motif").textContent = data.motif_used ?? "—";
+        document.getElementById("ia-valid").textContent = data.motifs_valides + " / " + data.motifs_total;
+
+        const verdictEl = document.getElementById("ia-verdict");
+
+        if (data.verdict === "OK") {
+            verdictEl.textContent = "OK";
+            verdictEl.style.color = "#4ade80";
+        } else if (data.verdict === "NOK") {
+            verdictEl.textContent = "NOK";
+            verdictEl.style.color = "#f87171";
+        } else {
+            verdictEl.textContent = "—";
+            verdictEl.style.color = "#e5e7eb";
+        }
+
+    } catch (err) {
+        console.warn("API IA OFFLINE");
+
+        document.getElementById("ia-verdict").textContent = "Hors ligne";
+        document.getElementById("ia-verdict").style.color = "#f87171";
+    }
+}
+
+// Refresh IA toutes les 500ms
+setInterval(updateIAStats, 500);
+updateIAStats();
+</script>
+
